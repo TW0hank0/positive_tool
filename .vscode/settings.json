@@ -4,7 +4,4 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "yaml.schemas": {
-        "https://www.schemastore.org/github-workflow.json": "file:///d%3A/D/code/positive_tool/.github/workflows/commit_test.yaml"
-    }
 }
