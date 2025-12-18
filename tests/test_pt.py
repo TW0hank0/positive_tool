@@ -13,4 +13,14 @@ from positive_tool import pt, exceptions
 def test_find_project_path():
     with pytest.raises(exceptions.ArgWrongType):
         pt.find_project_path("positive_tool", __file__, dir_deep_max="")  # type: ignore
+    with pytest.raises(exceptions.DirDeepError):
+        pt.find_project_path(
+            "positive_tool",
+            __file__,
+            dir_deep_max=1,
+        )
+    with pytest.raises(FileNotFoundError):
+        pt.find_project_path("positive_tool", "")
+    with pytest.raises(exceptions.DirNotFoundError):
+        pt.find_project_path("positive_tool", "C:\\" if os.name == "nt" else "/")
     pt.find_project_path("positive_tool", __file__, dir_deep_max=10)

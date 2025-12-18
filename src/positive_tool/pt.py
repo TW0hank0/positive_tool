@@ -1,7 +1,5 @@
 import os
 
-from typing import Any
-
 from . import exceptions
 from ._arg import ArgType
 
@@ -17,15 +15,17 @@ def find_project_path(
 
     :param project_name: 專案名稱
     :type project_name: str
-    :param start_find_path: 說明
+    :param start_find_path: 開始尋找的資料夾，預設為__file__（模組的資料夾，建議傳__file__）
     :type start_find_path: os.PathLike | str
     :param dir_deep_max: 資料夾的deep
     :type dir_deep_max: int
     """
+    # 檢查參數類型是否正確
     ArgType("project_name", project_name, str)
     ArgType("start_find_path", start_find_path, [os.PathLike, str])
+    if os.path.exists(start_find_path) is False:
+        raise FileNotFoundError(f"`start_find_path`不存在： {start_find_path}")
     ArgType("dir_deep_max", dir_deep_max, int)
-    # 檢查參數類型是否正確
     # arg_types: dict[str, dict[str, Any]] = {
     #    "project_name": {"type": [str], "value": project_name},
     #    "start_find_path": {"type": [os.PathLike, str], "value": start_find_path},
@@ -41,7 +41,7 @@ def find_project_path(
     #
     dir_deep_count: int = 0
     project_path: str | os.PathLike = start_find_path
-    project_path_log: list = []
+    project_path_log: list[str] = []
     while True:
         if dir_deep_count > dir_deep_max:
             raise exceptions.DirDeepError(
@@ -50,13 +50,12 @@ def find_project_path(
         if os.path.basename(project_path) == project_name:
             break
         else:
-            project_path = os.path.abspath(
-                os.path.normpath(os.path.join(project_path, ".."))
-            )
-            if project_path == project_path_log[-1]:
-                raise exceptions.DirNotFoundError(
-                    f"找不到： {project_name}，已搜尋深度： {dir_deep_count}，已搜尋資料夾： {project_path_log}"
-                )
+            project_path = os.path.normpath(os.path.join(project_path, ".."))
+            if len(project_path_log) > 0:
+                if project_path == project_path_log[(len(project_path_log) - 1)]:
+                    raise exceptions.DirNotFoundError(
+                        f"找不到： {project_name}，已搜尋深度： {dir_deep_count}，已搜尋資料夾： {project_path_log}"
+                    )
             project_path_log.append(project_path)
         dir_deep_count += 1
     del project_path_log
