@@ -3,6 +3,7 @@ import os
 from typing import Any
 
 from .exceptions import ArgWrongType
+from ._arg import ArgType
 
 
 def find_project_path(
@@ -21,23 +22,31 @@ def find_project_path(
     :param dir_deep_max: 資料夾的deep
     :type dir_deep_max: int
     """
+    ArgType("project_name", project_name, str)
+    ArgType("start_find_path", start_find_path, [os.PathLike, str])
+    ArgType("dir_deep_max", dir_deep_max, int)
     # 檢查參數類型是否正確
-    arg_types: dict[str, dict[str, Any]] = {
-        "project_name": {"type": str, "value": project_name},
-        "start_find_path": {"type": os.PathLike | str, "value": start_find_path},
-    }
-    for arg in arg_types:
-        if type(arg_types[arg]["value"]) is arg_types[arg]["type"]:
-            pass
-        else:
-            raise ArgWrongType(
-                f"{arg}的參數類型錯誤，應為：{arg_types[arg]['type']}，卻為： {type(arg_types[arg]['value'])}"
-            )
+    # arg_types: dict[str, dict[str, Any]] = {
+    #    "project_name": {"type": [str], "value": project_name},
+    #    "start_find_path": {"type": [os.PathLike, str], "value": start_find_path},
+    #    "dir_deep_max": {},
+    # }
+    # for arg in arg_types:
+    #    if type(arg_types[arg]["value"]) in arg_types[arg]["type"]:
+    #        pass
+    #    else:
+    #        raise ArgWrongType(
+    #            f"{arg}的參數類型錯誤，應為：{arg_types[arg]['type']}，卻為： {type(arg_types[arg]['value'])}"
+    #        )
     #
     dir_deep_count: int = 0
     project_path: str | os.PathLike = start_find_path
     project_path_log: list = []
     while True:
+        if dir_deep_count > dir_deep_max:
+            raise TimeoutError(
+                f"找不到專案資料夾，已收尋的資料夾深度： {dir_deep_count}，紀錄： {project_path_log}"
+            )
         if os.path.basename(project_path) == project_name:
             break
         else:
@@ -46,9 +55,5 @@ def find_project_path(
             )
             project_path_log.append(project_path)
         dir_deep_count += 1
-        if dir_deep_count > dir_deep_max:
-            raise TimeoutError(
-                f"找不到專案資料夾，已收尋的資料夾深度： {dir_deep_count}，紀錄： {project_path_log}"
-            )
     del project_path_log
     return project_path
