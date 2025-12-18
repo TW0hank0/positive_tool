@@ -2,7 +2,7 @@ import os
 
 from typing import Any
 
-from .exceptions import ArgWrongType
+from . import exceptions
 from ._arg import ArgType
 
 
@@ -44,7 +44,7 @@ def find_project_path(
     project_path_log: list = []
     while True:
         if dir_deep_count > dir_deep_max:
-            raise TimeoutError(
+            raise exceptions.DirDeepError(
                 f"找不到專案資料夾，已收尋的資料夾深度： {dir_deep_count}，紀錄： {project_path_log}"
             )
         if os.path.basename(project_path) == project_name:
@@ -53,6 +53,10 @@ def find_project_path(
             project_path = os.path.abspath(
                 os.path.normpath(os.path.join(project_path, ".."))
             )
+            if project_path == project_path_log[-1]:
+                raise exceptions.DirNotFoundError(
+                    f"找不到： {project_name}，已搜尋深度： {dir_deep_count}，已搜尋資料夾： {project_path_log}"
+                )
             project_path_log.append(project_path)
         dir_deep_count += 1
     del project_path_log

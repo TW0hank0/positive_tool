@@ -1,6 +1,6 @@
 from typing import Any, Iterable
 
-from .exceptions import ArgWrongType
+from . import exceptions
 
 
 class ArgType:
@@ -23,6 +23,6 @@ class ArgType:
 
     def check_value_type(self):
         if type(self.arg_value) not in self.arg_type:
-            raise ArgWrongType(
+            raise exceptions.ArgWrongType(
                 f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}"
             )
