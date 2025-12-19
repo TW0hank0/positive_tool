@@ -2,7 +2,7 @@ import os
 import sys
 import pytest
 
-# 把 package root 加入 sys.path（讓 src 可被直接匯入）
+# 把 package root 加入 sys.path
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 )

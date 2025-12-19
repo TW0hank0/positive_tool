@@ -7,7 +7,7 @@ class ArgType:
     def __init__(
         self,
         arg_name: str,
-        arg_value,
+        arg_value: Any,
         arg_type: list | Any,
         *,
         do_check_value_type: bool = True,

@@ -1,5 +1,8 @@
 name: build-and-upload-release
 
+permissions:
+  contents: write
+
 on:
   release:
     types: [published]
@@ -19,8 +22,6 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-        #with:
-        #enable-cache: true
 
       - name: Install Python with uv
         run: uv python install ${{ matrix.python }}
@@ -53,6 +54,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           UPLOAD_URL: ${{ github.event.release.upload_url }}
+        shell: bash
         run: |
           set -euo pipefail
           upload_url="${UPLOAD_URL%\{*}"
