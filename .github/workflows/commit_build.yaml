@@ -1,5 +1,8 @@
 name: commit-build
 
+permissions:
+  contents: write
+
 on:
   push:
 
@@ -51,6 +54,7 @@ jobs:
       - name: Create prerelease and upload wheel
         uses: ncipollo/release-action@v1
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.sha }}
           name: ${{ steps.get_version.outputs.version }}+${{ github.sha }}
           prerelease: true
