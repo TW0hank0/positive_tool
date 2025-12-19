@@ -51,11 +51,17 @@ jobs:
           echo "wheel_path=$file" >> $GITHUB_OUTPUT
           echo "wheel_name=$(basename \"$file\")" >> $GITHUB_OUTPUT
 
+      - name: Get short SHA
+        id: get_sha
+        run: |
+          short=$(echo $GITHUB_SHA | cut -c1-7)
+          echo "short_sha=$short" >> $GITHUB_OUTPUT
+
       - name: Create prerelease and upload wheel
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.sha }}
-          name: ${{ steps.get_version.outputs.version }}+${{ github.sha }}
+          tag: v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}
+          name: ${{ steps.get_version.outputs.version }}+${{ steps.get_sha.outputs.short_sha }}
           prerelease: true
           files: dist/*.whl
