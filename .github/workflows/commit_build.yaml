@@ -62,6 +62,23 @@ jobs:
           short=$(echo $GITHUB_SHA | cut -c1-7)
           echo "short_sha=$short" >> $GITHUB_OUTPUT
 
+      - name: Rename wheel to include Python version
+        id: rename_wheel
+        env:
+          ORIG: ${{ steps.find_wheel.outputs.wheel_path }}
+          PYVER: ${{ matrix.python }}
+        run: |
+          orig="$ORIG"
+          if [ -z "$orig" ]; then echo "No wheel found at $ORIG"; exit 1; fi
+          base=$(basename "$orig")
+          ext="${base##*.}"
+          name="${base%.*}"
+          new="${name}+py${PYVER}.${ext}"
+          cp "$orig" "dist/$new"
+          echo "wheel_path=dist/$new" >> $GITHUB_OUTPUT
+          echo "wheel_name=$new" >> $GITHUB_OUTPUT
+          ls -la dist || true
+
       - name: Create prerelease and upload wheel
         uses: ncipollo/release-action@v1
         with:
@@ -69,4 +86,4 @@ jobs:
           tag: v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}-py${{ matrix.python }}
           name: ${{ steps.get_version.outputs.version }}+${{ steps.get_sha.outputs.short_sha }}+py${{ matrix.python }}
           prerelease: true
-          artifact: ${{ steps.find_wheel.outputs.wheel_path }}
+          artifact: ${{ steps.rename_wheel.outputs.wheel_path }}
