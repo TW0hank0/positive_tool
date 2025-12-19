@@ -2,6 +2,7 @@
 
 ### 新增
 - github ci
+- `pt.build_logger()`
 
 ### 更改
 - 檔案結構

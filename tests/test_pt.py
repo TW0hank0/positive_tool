@@ -29,3 +29,8 @@ def test_find_project_path():
         )
         == "positive_tool"
     )
+
+
+def test_build_logger():
+    with pytest.raises(exceptions.ArgWrongType):
+        pt.build_logger(0)  # type: ignore
