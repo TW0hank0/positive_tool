@@ -6,6 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]
 
+[project.optional-dependencies]
+test = [
+    "pytest>=9.0.2",
+    # 測試用套件
+]
 
 [tool.pytest.ini_options]
 addopts = "-v --cov=positive_tool --cov-report=term-missing"

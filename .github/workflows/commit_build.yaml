@@ -86,4 +86,4 @@ jobs:
           tag: v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}-py${{ matrix.python }}
           name: ${{ steps.get_version.outputs.version }}+${{ steps.get_sha.outputs.short_sha }}+py${{ matrix.python }}
           prerelease: true
-          artifact: ${{ steps.rename_wheel.outputs.wheel_path }}
+          artifacts: ${{ steps.rename_wheel.outputs.wheel_path }}
