@@ -33,8 +33,8 @@ jobs:
       - name: Install project dependencies with uv
         run: uv sync
 
-      #      - name: Build distribution
-      #        run: uv build
+      - name: Build distribution
+        run: uv build
 
       - name: Run tests with pytest
         run: uv run pytest
