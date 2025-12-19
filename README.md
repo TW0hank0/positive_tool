@@ -4,11 +4,13 @@
 
 ### 主要功能
 - find_project_path：由指定路徑向上查找並回傳專案資料夾路徑。
+- `build_logger`：使用`logging`及`rich.RichHandler`建立`Logger`
 
 
 ### 測試
 ```bash
-pytest
+uv sync --extra test
+uv run pytest
 ```
 
 ### 貢獻
