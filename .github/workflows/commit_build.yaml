@@ -51,6 +51,11 @@ jobs:
           echo "wheel_path=$file" >> $GITHUB_OUTPUT
           echo "wheel_name=$(basename \"$file\")" >> $GITHUB_OUTPUT
 
+      - name: Show dist contents (debug)
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la dist || true
+
       - name: Get short SHA
         id: get_sha
         run: |
@@ -61,7 +66,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}
-          name: ${{ steps.get_version.outputs.version }}+${{ steps.get_sha.outputs.short_sha }}
+          tag: v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}-py${{ matrix.python }}
+          name: ${{ steps.get_version.outputs.version }}+${{ steps.get_sha.outputs.short_sha }}+py${{ matrix.python }}
           prerelease: true
-          files: dist/*.whl
+          files: ${{ steps.find_wheel.outputs.wheel_path }}
