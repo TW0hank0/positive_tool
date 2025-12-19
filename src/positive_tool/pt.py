@@ -5,7 +5,7 @@ import enum
 from rich.logging import RichHandler
 
 from . import exceptions
-from ._arg import ArgType
+from .arg import ArgType
 
 
 def find_project_path(
@@ -24,11 +24,17 @@ def find_project_path(
     :param dir_deep_max: 資料夾的deep
     :type dir_deep_max: int
     """
-    # 檢查參數類型是否正確
+    # 檢查參數
     ArgType("project_name", project_name, str)
-    ArgType("start_find_path", start_find_path, [os.PathLike, str])
-    if os.path.exists(start_find_path) is False:
-        raise FileNotFoundError(f"`start_find_path`不存在： {start_find_path}")
+    ArgType(
+        "start_find_path",
+        start_find_path,
+        [os.PathLike, str],
+        is_exists=True,
+        is_folder=True,
+    )
+    # if os.path.exists(start_find_path) is False:
+    # raise FileNotFoundError(f"`start_find_path`不存在： {start_find_path}")
     ArgType("dir_deep_max", dir_deep_max, int)
     # arg_types: dict[str, dict[str, Any]] = {
     #    "project_name": {"type": [str], "value": project_name},

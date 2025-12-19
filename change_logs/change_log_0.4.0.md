@@ -2,3 +2,4 @@
 
 ### 新增
 - `LICENSE`
+- `arg.py::ArgType`的新功能

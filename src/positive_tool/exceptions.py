@@ -6,6 +6,8 @@ class ArgWrongType(Exception):
 
 
 class DirDeepError(Exception):
+    """`pt.py::find_project_path` 的自訂錯誤"""
+
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 

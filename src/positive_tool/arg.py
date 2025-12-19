@@ -6,7 +6,7 @@ from . import exceptions
 
 
 class ArgType:
-    """`positive_tool`內部工具，功能：檢查參數類別"""
+    """`positive_tool`工具，功能：檢查參數類別"""
 
     __slots__ = [
         "arg_name",
@@ -28,6 +28,10 @@ class ArgType:
         is_file: bool = False,
         is_folder: bool = False,
     ) -> None:
+        # 檢查參數
+        if is_file is True and is_folder is True:
+            raise exceptions.ArgWrongType("`is_file` 和 `is_folder` 不能同時使用")
+        #
         self.arg_name = arg_name
         self.arg_value = arg_value
         if type(arg_type) is not list:
@@ -65,7 +69,8 @@ class ArgType:
                     raise exceptions.DirWrongType(
                         f"應為資料夾卻是檔案： {self.arg_value}"
                     )
-        elif self.is_file is True and os.path.exists(self.arg_value) is True:
-            raise FileExistsError(f"檔案已存在： {self.arg_value}")
-        elif self.is_folder is True and os.path.exists(self.arg_value) is True:
-            raise FileExistsError(f"資料夾已存在： {self.arg_value}")
+        elif self.is_exists is False and os.path.exists(self.arg_value):
+            if self.is_file is True:
+                raise FileExistsError(f"檔案已存在： {self.arg_value}")
+            elif self.is_folder is True:
+                raise FileExistsError(f"資料夾已存在： {self.arg_value}")
