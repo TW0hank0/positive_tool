@@ -1,0 +1,36 @@
+name: commit-build
+
+on:
+  push:
+
+jobs:
+  build_wheel:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.12, 3.13]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python with uv
+        run: uv python install ${{ matrix.python }}
+
+      - name: Create venv
+        run: uv venv
+
+      - name: Install project dependencies with uv
+        run: uv sync
+
+      - name: Build distribution with uv
+        run: uv build
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.python }}
+          path: dist/*.whl
