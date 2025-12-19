@@ -1,14 +1,16 @@
 [project]
 name = "positive-tool"
 version = "0.2.0"
-description = "`positive_tool` 一個輔助開發的 Python 工具函式庫。目標提供小而實用的工具"
+description = "`positive_tool` 一個輔助開發的 Python 工具函式庫。目標提供實用的工具"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]
+dependencies = []
+#dependencies = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]
 
 [project.optional-dependencies]
 test = [
     "pytest>=9.0.2",
+    "pytest-cov>=4.0.0",
     # 測試用套件
 ]
 

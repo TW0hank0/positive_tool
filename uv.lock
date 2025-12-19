@@ -116,16 +116,19 @@ wheels = [
 name = "positive-tool"
 version = "0.2.0"
 source = { virtual = "." }
-dependencies = [
+
+[package.optional-dependencies]
+test = [
     { name = "pytest" },
     { name = "pytest-cov" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "pytest", specifier = ">=9.0.2" },
-    { name = "pytest-cov", specifier = ">=4.0.0" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=9.0.2" },
+    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=4.0.0" },
 ]
+provides-extras = ["test"]
 
 [[package]]
 name = "pygments"
