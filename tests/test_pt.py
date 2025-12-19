@@ -23,4 +23,9 @@ def test_find_project_path():
         pt.find_project_path("positive_tool", "")
     with pytest.raises(exceptions.DirNotFoundError):
         pt.find_project_path("positive_tool", "C:\\" if os.name == "nt" else "/")
-    pt.find_project_path("positive_tool", __file__, dir_deep_max=10)
+    assert (
+        os.path.basename(
+            pt.find_project_path("positive_tool", __file__, dir_deep_max=10)
+        )
+        == "positive_tool"
+    )
