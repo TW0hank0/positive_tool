@@ -50,10 +50,13 @@ class ArgType:
             raise exceptions.ArgWrongType(
                 f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}"
             )
-        # if self.is_exists is True or self.is_file is True or self.is_folder is True:
+        # self.is_exists is True
         if self.is_exists is True:
             if os.path.exists(self.arg_value) is False:
-                raise FileNotFoundError(f"找不到檔案： {self.arg_value}")
+                if self.is_file is True:
+                    raise FileNotFoundError(f"找不到檔案： {self.arg_value}")
+                elif self.is_folder is True:
+                    raise FileNotFoundError(f"找不到資料夾： {self.arg_value}")
             elif os.path.exists(self.arg_value) is True:
                 if self.is_file is True and (
                     os.path.isfile(self.arg_value) is False
@@ -69,6 +72,7 @@ class ArgType:
                     raise exceptions.DirWrongType(
                         f"應為資料夾卻是檔案： {self.arg_value}"
                     )
+        # self.is_exists is False
         elif self.is_exists is False and os.path.exists(self.arg_value):
             if self.is_file is True:
                 raise FileExistsError(f"檔案已存在： {self.arg_value}")

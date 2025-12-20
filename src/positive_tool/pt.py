@@ -10,7 +10,7 @@ from .arg import ArgType
 
 def find_project_path(
     project_name: str,
-    start_find_path: os.PathLike | str = __file__,
+    start_find_path: os.PathLike | str = os.path.abspath(os.path.dirname(__file__)),
     *,
     dir_deep_max: int = 15,
 ) -> os.PathLike | str:
@@ -53,7 +53,7 @@ def find_project_path(
     project_path: str | os.PathLike = start_find_path
     project_path_log: list[str] = []
     while True:
-        if dir_deep_count > dir_deep_max:
+        if dir_deep_count >= dir_deep_max:
             raise exceptions.DirDeepError(
                 f"找不到專案資料夾，已收尋的資料夾深度： {dir_deep_count}，紀錄： {project_path_log}"
             )
