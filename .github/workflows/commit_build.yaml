@@ -82,7 +82,7 @@ jobs:
       - name: Get datetime
         id: get_datetime
         run: |
-          datetime = $(python -c "import datetime; print(datetime.datetime.now().strftime("%Y-%d-%m_%H-%M-%S"))")
+          datetime = $(python -c "import datetime; print(datetime.datetime.now().strftime('%Y-%d-%m_%H-%M-%S'))")
           echo "datetime=$datetime" >> $GITHUB_OUTPUT
 
       - name: Create prerelease and upload wheel
