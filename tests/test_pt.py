@@ -7,7 +7,7 @@ sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 )
 
-from positive_tool import pt, exceptions
+from positive_tool import pt, exceptions, arg
 
 
 def test_pt_find_project_path():
@@ -26,9 +26,17 @@ def test_pt_find_project_path():
         pt.find_project_path("positive_tool", "")
     with pytest.raises(exceptions.DirNotFoundError):
         pt.find_project_path("positive_tool", "C:\\" if os.name == "nt" else "/")
+    with pytest.raises(exceptions.DirWrongType):
+        pt.find_project_path("positive_tool", os.path.abspath(__file__))
     assert os.path.basename(pt.find_project_path("positive_tool")) == "positive_tool"
 
 
 def test_pt_build_logger():
     with pytest.raises(exceptions.ArgWrongType):
         pt.build_logger(0)  # type: ignore
+
+
+def test_arg_argtype():
+    with pytest.raises(exceptions.ArgWrongType):
+        arg.ArgType("test_arg", "test_value", str, is_file=True, is_folder=True)
+    arg.ArgType("test_arg", "test", str)

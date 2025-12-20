@@ -1,4 +1,4 @@
-# positive_tool v0.4.0 (draft)
+# positive_tool v0.4.0
 
 ### 新增
 - `LICENSE`

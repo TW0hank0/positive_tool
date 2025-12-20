@@ -75,7 +75,7 @@ def find_project_path(
 @enum.unique
 class LogLevel(enum.IntEnum):
     """
-    這個class是為了type hint
+    這個class的功能是 type hint
     """
 
     CRITICAL = logging.CRITICAL

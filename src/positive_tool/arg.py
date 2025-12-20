@@ -73,7 +73,7 @@ class ArgType:
                         f"應為資料夾卻是檔案： {self.arg_value}"
                     )
         # self.is_exists is False
-        elif self.is_exists is False and os.path.exists(self.arg_value):
+        elif self.is_exists is False and os.path.exists(self.arg_value) is True:
             if self.is_file is True:
                 raise FileExistsError(f"檔案已存在： {self.arg_value}")
             elif self.is_folder is True:
