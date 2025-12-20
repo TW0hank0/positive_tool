@@ -33,22 +33,7 @@ def find_project_path(
         is_exists=True,
         is_folder=True,
     )
-    # if os.path.exists(start_find_path) is False:
-    # raise FileNotFoundError(f"`start_find_path`不存在： {start_find_path}")
     ArgType("dir_deep_max", dir_deep_max, int)
-    # arg_types: dict[str, dict[str, Any]] = {
-    #    "project_name": {"type": [str], "value": project_name},
-    #    "start_find_path": {"type": [os.PathLike, str], "value": start_find_path},
-    #    "dir_deep_max": {},
-    # }
-    # for arg in arg_types:
-    #    if type(arg_types[arg]["value"]) in arg_types[arg]["type"]:
-    #        pass
-    #    else:
-    #        raise ArgWrongType(
-    #            f"{arg}的參數類型錯誤，應為：{arg_types[arg]['type']}，卻為： {type(arg_types[arg]['value'])}"
-    #        )
-    #
     dir_deep_count: int = 0
     project_path: str | os.PathLike = start_find_path
     project_path_log: list[str] = []

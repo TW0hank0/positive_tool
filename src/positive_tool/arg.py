@@ -38,9 +38,9 @@ class ArgType:
             self.arg_type: list = [arg_type]
         else:
             self.arg_type: list = arg_type
-        self.is_exists = is_exists
-        self.is_file = is_file
-        self.is_folder = is_folder
+        self.is_exists: bool = is_exists
+        self.is_file: bool = is_file
+        self.is_folder: bool = is_folder
         #
         if do_check_value_type is True:
             self.check_value_type()
@@ -50,7 +50,6 @@ class ArgType:
             raise exceptions.ArgWrongType(
                 f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}"
             )
-        # self.is_exists is True
         if self.is_exists is True:
             if os.path.exists(self.arg_value) is False:
                 if self.is_file is True:
