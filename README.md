@@ -14,4 +14,4 @@ uv run pytest
 ```
 
 ### 貢獻
-- 歡迎提交 issue 與 pull request，請遵守專案的程式碼風格與測試要求。
+- 歡迎提交 issue 與 pull request。
