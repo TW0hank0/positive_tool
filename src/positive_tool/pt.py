@@ -4,8 +4,8 @@ import enum
 
 from rich.logging import RichHandler
 
-from . import exceptions
-from .arg import ArgType
+import exceptions
+from arg import ArgType
 
 
 def find_project_path(

@@ -2,7 +2,7 @@ import os
 
 from typing import Any
 
-from . import exceptions
+import exceptions
 
 
 class ArgType:

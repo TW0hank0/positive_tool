@@ -41,7 +41,7 @@ jobs:
       - name: Get package version
         id: get_version
         run: |
-          version=$(python -c "import tomllib,sys;d=tomllib.load(open('pyproject.toml','rb'));v=d.get('project',{}).get('version') or d.get('tool',{}).get('poetry',{}).get('version'); print(v)")
+          version=$(python -c "import tomllib; import sys;d=tomllib.load(open('pyproject.toml','rb'));v=d.get('project',{}).get('version') or d.get('tool',{}).get('poetry',{}).get('version'); print(v)")
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Find built wheel
@@ -73,7 +73,7 @@ jobs:
           base=$(basename "$orig")
           ext="${base##*.}"
           name="${base%.*}"
-          new="${name}+py${PYVER}.${ext}"
+          new="${name}+${PYVER}.${ext}"
           cp "$orig" "dist/$new"
           echo "wheel_path=dist/$new" >> $GITHUB_OUTPUT
           echo "wheel_name=$new" >> $GITHUB_OUTPUT
@@ -83,7 +83,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}-py${{ matrix.python }}
-          name: ${{ steps.get_version.outputs.version }}+${{ steps.get_sha.outputs.short_sha }}+py${{ matrix.python }}
+          tag: v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}-${{ matrix.python }}
+          name: ${{ steps.get_version.outputs.version }}+${{ steps.get_sha.outputs.short_sha }}+${{ matrix.python }}
           prerelease: true
           artifacts: ${{ steps.rename_wheel.outputs.wheel_path }}
