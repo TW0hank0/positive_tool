@@ -2,7 +2,7 @@ import os
 import logging
 import enum
 
-from typing import Literal
+# from typing import Literal
 
 from rich.logging import RichHandler
 

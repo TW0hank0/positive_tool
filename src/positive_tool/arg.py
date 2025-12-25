@@ -8,52 +8,76 @@ from . import exceptions
 class ArgType:
     """`positive_tool`工具：檢查參數類別"""
 
-    __slots__ = [
+    __slots__: list[str] = [
         "arg_name",
         "arg_value",
         "arg_type",
         "is_file",
         "is_folder",
         "is_exists",
+        "check_dir_already_exists",
     ]
 
     def __init__(
         self,
         arg_name: str,
         arg_value: Any,
-        arg_type: list | Any,
+        arg_type: list[Any] | Any,
         *,
         do_check_value_type: bool = True,
         is_exists: bool = False,
         is_file: bool = False,
         is_folder: bool = False,
+        check_dir_already_exists: bool = False,
     ) -> None:
         # 檢查參數
         if is_file is True and is_folder is True:
             raise exceptions.ArgWrongType("`is_file` 和 `is_folder` 不能同時使用")
-        if is_exists is True and type(arg_value) not in [str, os.PathLike]:
+        if ((is_exists is True) or (is_file is True) or (is_folder is True)) and type(
+            arg_value
+        ) not in [str, os.PathLike]:
             raise exceptions.ArgWrongType("`is_exists` 參數錯誤！")
         #
         self.arg_name: str = arg_name
         self.arg_value: Any = arg_value
-        if type(arg_type) is not list:
-            self.arg_type: list[Any] = [arg_type]
+        if type(arg_type) in [list]:
+            # self.arg_type: list = [type(i) for i in arg_type]
+            self.arg_type: list = arg_type
         else:
-            self.arg_type: list[Any] = arg_type
+            # self.arg_type: list = [type(arg_type)]
+            self.arg_type: list = [arg_type]
         self.is_exists: bool = is_exists
         self.is_file: bool = is_file
         self.is_folder: bool = is_folder
+        self.check_dir_already_exists: bool = check_dir_already_exists
         #
         if do_check_value_type is True:
             self.check_value_type()
 
-    def check_value_type(self):
-        if type(self.arg_value) not in self.arg_type:
+    def check_value_type(self) -> None:
+        if (
+            (type(self.arg_value) not in self.arg_type)
+            and (self.arg_value is not None)
+            and (self.arg_value is not type(None))
+        ) or ((self.arg_value is None) and (None not in self.arg_type)):
+            # arg_type_str_print: str = ""
+            # for i_num in range(len(self.arg_type)):
+            # if i_num == (len(self.arg_type) - 1):
+            # arg_type_str_print = arg_type_str_print + str(
+            # type(self.arg_type[i_num])
+            # )
+            # else:
+            # arg_type_str_print = (
+            # arg_type_str_print + "、" + str(type(self.arg_type[i_num]))
+            # )
+            # arg_type_str_print = f"[{arg_type_str_print}]"
+            #
             raise exceptions.ArgWrongType(
-                f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}"
+                f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
             )
-        if self.is_exists is True:
-            match os.path.exists(self.arg_value):
+        #
+        if self.is_exists is True and self.arg_value is not None:
+            match os.path.exists(self.arg_value):  # type: ignore
                 case False:
                     # if os.path.exists(self.arg_value) is False:
                     if self.is_file is True:
@@ -63,22 +87,27 @@ class ArgType:
                 case True:
                     # elif os.path.exists(self.arg_value) is True:
                     if self.is_file is True and (
-                        os.path.isfile(self.arg_value) is False
-                        or os.path.isdir(self.arg_value) is True
+                        os.path.isfile(self.arg_value) is False  # type: ignore
+                        or os.path.isdir(self.arg_value) is True  # type: ignore
                     ):
                         raise exceptions.DirWrongType(
                             f"應為檔案卻是資料夾： {self.arg_value}"
                         )
                     #
                     if self.is_folder is True and (
-                        os.path.isdir(self.arg_value) is False
-                        or os.path.isfile(self.arg_value) is True
+                        os.path.isdir(self.arg_value) is False  # type: ignore
+                        or os.path.isfile(self.arg_value) is True  # type: ignore
                     ):
                         raise exceptions.DirWrongType(
                             f"應為資料夾卻是檔案： {self.arg_value}"
                         )
         # self.is_exists is False
-        elif self.is_exists is False and os.path.exists(self.arg_value) is True:
+        elif (
+            self.is_exists is False
+            and self.check_dir_already_exists is True
+            and self.arg_value is not None
+            and os.path.exists(self.arg_value) is True  # type: ignore
+        ):
             if self.is_file is True:
                 raise FileExistsError(f"檔案已存在： {self.arg_value}")
             elif self.is_folder is True:

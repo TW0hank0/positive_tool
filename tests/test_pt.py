@@ -38,11 +38,19 @@ def test_pt_build_logger():
         pt.build_logger(os.path.join(os.path.dirname(__file__), "test_file"), 0)  # type: ignore
     with pytest.raises(exceptions.ArgWrongType):
         pt.build_logger(
-            os.path.join(os.path.dirname(__file__), "test_file"),
+            os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
             log_level_file="",  # type: ignore
         )
     with pytest.raises(exceptions.ArgWrongType):
         pt.build_logger(
-            os.path.join(os.path.dirname(__file__), "test_file"),
+            os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
             log_level_console="",  # type: ignore
         )
+    with pytest.raises(exceptions.ArgWrongType):
+        pt.build_logger(
+            os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
+            with_rich_traceback="",  # type: ignore
+        )
+    pt.build_logger(
+        os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
+    )
