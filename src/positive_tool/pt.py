@@ -2,6 +2,8 @@ import os
 import logging
 import enum
 
+from typing import Literal
+
 from rich.logging import RichHandler
 
 from . import exceptions
@@ -89,7 +91,9 @@ def build_logger(
     format = "%(asctime)s | %(name)s | %(levelname)s | [%(filename)s:%(lineno)d::%(funcName)s] | %(message)s"
     time_format = "[%Y-%m-%d %H:%M:%S]"
     # 建立 RichHandler
-    console_handler = RichHandler(rich_tracebacks=with_rich_traceback)
+    console_handler = RichHandler(
+        rich_tracebacks=with_rich_traceback, tracebacks_show_locals=True
+    )
     console_handler.setLevel(log_level_console)
     # 建立 FileHandler
     file_handler = logging.FileHandler(log_file_path, encoding="utf-8", mode="a")
@@ -103,7 +107,5 @@ def build_logger(
         datefmt=time_format,
         handlers=[console_handler, file_handler],
     )
-    if logger_name is not None:
-        return logging.getLogger(logger_name)
-    else:
-        return None
+    #
+    return logging.getLogger(logger_name)

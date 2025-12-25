@@ -7,7 +7,7 @@ sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 )
 
-from positive_tool import pt, exceptions, arg
+from positive_tool import pt, exceptions
 
 
 def test_pt_find_project_path():
@@ -34,9 +34,15 @@ def test_pt_find_project_path():
 def test_pt_build_logger():
     with pytest.raises(exceptions.ArgWrongType):
         pt.build_logger(0)  # type: ignore
-
-
-def test_arg_argtype():
     with pytest.raises(exceptions.ArgWrongType):
-        arg.ArgType("test_arg", "test_value", str, is_file=True, is_folder=True)
-    arg.ArgType("test_arg", "test", str)
+        pt.build_logger(os.path.join(os.path.dirname(__file__), "test_file"), 0)  # type: ignore
+    with pytest.raises(exceptions.ArgWrongType):
+        pt.build_logger(
+            os.path.join(os.path.dirname(__file__), "test_file"),
+            log_level_file="",  # type: ignore
+        )
+    with pytest.raises(exceptions.ArgWrongType):
+        pt.build_logger(
+            os.path.join(os.path.dirname(__file__), "test_file"),
+            log_level_console="",  # type: ignore
+        )
