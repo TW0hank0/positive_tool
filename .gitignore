@@ -12,9 +12,9 @@ wheels/
 # tool cache
 .mypy_cache/
 .ruff_cache/
-.pytest_cache/
-.coverage
 
 #test cache
 #tmp_dir_*
 tmp_dir_test_file
+.pytest_cache/
+.coverage
