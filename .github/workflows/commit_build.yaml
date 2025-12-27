@@ -94,7 +94,7 @@ jobs:
           prerelease: true
           artifacts: ${{ steps.rename_wheel.outputs.wheel_path }}
           body: |
-            ### 這是測試版，使用github action製作
+            **這是測試版，使用github action製作**
             - 版本： ${{ steps.get_version.outputs.version }}
             - 時間： ${{ steps.get_datetime.outputs.datetime }}
             - github_sha： ${{ steps.get_sha.outputs.short_sha }}
