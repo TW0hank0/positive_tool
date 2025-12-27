@@ -10,7 +10,6 @@ wheels/
 .venv
 
 # tool cache
-.mypy_cache/
 .ruff_cache/
 
 #test cache

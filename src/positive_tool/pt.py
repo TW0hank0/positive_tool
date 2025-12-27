@@ -3,7 +3,6 @@ import logging
 import enum
 
 from typing import SupportsInt, Self
-# from typing import Literal
 
 from rich.logging import RichHandler
 
@@ -113,17 +112,30 @@ def build_logger(
 
 
 class UInt:
-    __slot__ = ["value"]
+    """正數"""
+
+    __slot__: list[str] = ["value"]
 
     def __init__(self, value: int | float | str | SupportsInt | Self) -> None:
+        #
         ArgType("value", value, [int, float, str, SupportsInt, UInt])
-        if int(value) < 0:
+        #
+        if type(value) is int:
+            value_int = value
+        elif type(value) in [float, str, SupportsInt]:
+            value_int = int(value)
+        #
+        if value_int < 0:
             raise exceptions.UIntValueError("UInt不能小於零！")
         else:
-            if isinstance(value, int):
-                self.value: int = value
-            elif isinstance(value, (float, str)):
-                self.value = int(value)
+            self.value = value_int
+        # if int(value) < 0:
+        # raise exceptions.UIntValueError("UInt不能小於零！")
+        # else:
+        # if isinstance(value, int):
+        # self.value: int = value
+        # elif isinstance(value, (float, str)):
+        # self.value = int(value)
 
     def __add__(self, other: int | float | Self):
         """符號：`+`"""
@@ -184,7 +196,7 @@ class UInt:
         else:
             raise NotImplementedError
         #
-        if other_int < 0 and abs(other_int) > self.value:
+        if other_int > 0 and abs(other_int) > self.value:
             raise exceptions.UIntValueError("UInt不能小於零！")
         else:
             result = UInt(self.value - other_int)
@@ -201,7 +213,7 @@ class UInt:
         else:
             raise NotImplementedError
         #
-        if other_int < 0 and abs(other_int) > self.value:
+        if other_int > 0 and abs(other_int) > self.value:
             raise exceptions.UIntValueError("UInt不能小於零！")
         else:
             self.value -= other_int
