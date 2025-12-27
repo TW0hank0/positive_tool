@@ -82,19 +82,19 @@ jobs:
       - name: Get datetime
         id: get_datetime
         run: |
-          datetime=$(python -c "import datetime; print(datetime.datetime.now().strftime('%Y-%d-%m_%H-%M-%S'))")
+          datetime=$(python -c "import datetime; print(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))")
           echo "datetime=$datetime" >> $GITHUB_OUTPUT
 
       - name: Create prerelease and upload wheel
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: pre-v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.short_sha }}-${{ matrix.python }}
+          tag: v${{ steps.get_version.outputs.version }}-pre-${{ steps.get_sha.outputs.short_sha }}-${{ matrix.python }}
           name: pre-release+${{ steps.get_version.outputs.version }}+${{ steps.get_sha.outputs.short_sha }}+${{ matrix.python }}+${{ steps.get_datetime.outputs.datetime }}
           prerelease: true
           artifacts: ${{ steps.rename_wheel.outputs.wheel_path }}
           body: |
-            ### 這是測試版
+            ### 這是測試版，使用github action製作
             - 版本： ${{ steps.get_version.outputs.version }}
             - 時間： ${{ steps.get_datetime.outputs.datetime }}
             - github_sha： ${{ steps.get_sha.outputs.short_sha }}
