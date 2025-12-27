@@ -233,15 +233,15 @@ class UInt:
         # ArgType("other", other, [int, float, UInt])
         #
         if isinstance(other, int):
-            other_int = other
+            other_int: int = other
         elif isinstance(other, float):
-            other_int = int(other)
+            other_int: int = int(other)
         elif isinstance(other, UInt):
-            other_int = other.value
+            other_int: int = other.value
         else:
             raise NotImplementedError
         #
-        if other_int < 0:
+        if other_int < 0 and other_int != 0:
             raise exceptions.UIntValueError("UInt不能小於零！")
         else:
             result = UInt(self.value * other_int)
