@@ -1,6 +1,7 @@
 import os
 
-from typing import Any
+import typing
+from typing import Any, Literal
 
 from . import exceptions
 
@@ -59,22 +60,28 @@ class ArgType:
             (type(self.arg_value) not in self.arg_type)
             and (self.arg_value is not None)
             and (self.arg_value is not type(None))
-        ) or ((self.arg_value is None) and (None not in self.arg_type)):
-            # arg_type_str_print: str = ""
-            # for i_num in range(len(self.arg_type)):
-            # if i_num == (len(self.arg_type) - 1):
-            # arg_type_str_print = arg_type_str_print + str(
-            # type(self.arg_type[i_num])
-            # )
-            # else:
-            # arg_type_str_print = (
-            # arg_type_str_print + "、" + str(type(self.arg_type[i_num]))
-            # )
-            # arg_type_str_print = f"[{arg_type_str_print}]"
-            #
-            raise exceptions.ArgWrongType(
-                f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
-            )
+            and (typing.get_origin(self.arg_value) is not typing.Literal)
+            and (typing.get_origin(self.arg_value) is not Literal)
+        ):
+            self.raise_arg_wrong_type_error()
+        elif (
+            (self.arg_value is None)
+            and (None not in self.arg_type)
+            and (typing.get_origin(self.arg_value) is not typing.Literal)
+            and (typing.get_origin(self.arg_value) is not Literal)
+        ):
+            self.raise_arg_wrong_type_error()
+        elif type(self.arg_value) not in self.arg_type and self.arg_value is not None:
+            value_o_type = typing.get_origin(self.arg_value)
+            if value_o_type is typing.get_origin(self.arg_type):
+                arg_o_type_values = typing.get_args(self.arg_value)
+                value_o_type_values = typing.get_args(self.arg_type)
+                for i in arg_o_type_values:
+                    if type(i) in value_o_type_values:
+                        break
+                else:
+                    self.raise_arg_wrong_type_error()
+            pass
         #
         if self.is_exists is True and self.arg_value is not None:
             match os.path.exists(self.arg_value):  # type: ignore
@@ -112,3 +119,8 @@ class ArgType:
                 raise FileExistsError(f"檔案已存在： {self.arg_value}")
             elif self.is_folder is True:
                 raise FileExistsError(f"資料夾已存在： {self.arg_value}")
+
+    def raise_arg_wrong_type_error(self):
+        raise exceptions.ArgWrongType(
+            f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
+        )

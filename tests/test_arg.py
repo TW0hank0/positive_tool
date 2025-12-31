@@ -1,6 +1,8 @@
 import sys
 import os
 
+from typing import Literal
+
 import pytest
 
 # 把 package root 加入 sys.path
@@ -48,3 +50,4 @@ def test_arg_argtype():
         )
     #
     arg.ArgType("test_arg", "test", str)
+    arg.ArgType("test", 0, [Literal[0]])
