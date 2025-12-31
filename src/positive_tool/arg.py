@@ -1,7 +1,7 @@
 import os
 
 import typing
-from typing import Any, Literal
+from typing import Any, Iterable
 
 from . import exceptions
 
@@ -23,7 +23,7 @@ class ArgType:
         self,
         arg_name: str,
         arg_value: Any,
-        arg_type: list[Any] | Any,
+        arg_type: list[Any] | Iterable | Any,
         *,
         do_check_value_type: bool = True,
         is_exists: bool = False,
@@ -41,11 +41,11 @@ class ArgType:
         #
         self.arg_name: str = arg_name
         self.arg_value: Any = arg_value
-        if type(arg_type) in [list]:
-            # self.arg_type: list = [type(i) for i in arg_type]
+        if type(arg_type) is list:
             self.arg_type: list = arg_type
+        elif type(arg_type) is Iterable:
+            self.arg_type: list = list(arg_type)
         else:
-            # self.arg_type: list = [type(arg_type)]
             self.arg_type: list = [arg_type]
         self.is_exists: bool = is_exists
         self.is_file: bool = is_file
@@ -74,10 +74,12 @@ class ArgType:
             # self.raise_arg_wrong_type_error()
         elif (
             self.arg_value is not None
-            and type(self.arg_type)
-            is not type(ArgType)  # 確定是數值非class（資料類型）
-            and typing.get_origin(self.arg_value) is None
+            and (
+                type(self.arg_value) is not type(ArgType)
+            )  # 確定是數值非class（資料類型）
+            #and typing.get_origin(self.arg_value) is None
         ):
+            break_loop = False
             for i in self.arg_type:
                 if typing.get_origin(i) is None:
                     if (
@@ -90,47 +92,62 @@ class ArgType:
                         type(i) is not type(ArgType)
                         and type(i) is type(self.arg_value)
                         and i == self.arg_value
-                    ):
+                    ):  # `i` 是數值，`self.arg_value`也是數值
+                        break
+                elif typing.get_origin(i) is not None and len(typing.get_args(i)) > 0:
+                    for arg in typing.get_args(i):
+                        if type(arg) is type(ArgType):
+                            if type(self.arg_value) is type(arg):
+                                break_loop = True
+                                break
+                        elif type(arg) is not type(ArgType):
+                            if (
+                                type(self.arg_value) is type(arg)
+                                and self.arg_value == arg
+                            ):
+                                break_loop = True
+                                break
+                    if break_loop is True:
                         break
             else:
-                if type(self.arg_value) not in self.arg_type:
-                    self.raise_arg_wrong_type_error()
-        else:
-            # elif self.arg_value is not None:
-            arg_types: list[tuple] = []
-            for i in self.arg_type:
-                if typing.get_origin(i) is None and i is not None:
-                    if type(self.arg_value) is type(i):
-                        break
-                elif (
-                    typing.get_origin(i) is not None
-                    and len(typing.get_args(i)) < 1
-                    and i is not None
-                ):
-                    pass
-                else:
-                    arg_types.append((typing.get_origin(i), typing.get_args(i)))
-            else:
-                break_loop = False
-                for o, a in arg_types:
-                    if typing.get_origin(self.arg_value) is o:
-                        for i in a:
-                            if typing.get_origin(i) is None:
-                                if (
-                                    type(i) is type(ArgType)
-                                    and type(self.arg_value) is i
-                                ):
-                                    break_loop = True
-                                    break
-                                elif (
-                                    type(i) is not type(ArgType) and self.arg_value == i
-                                ):
-                                    break_loop = True
-                                    break
-                        if break_loop is True:
-                            break
-                else:
-                    self.raise_arg_wrong_type_error()
+                # if type(self.arg_value) not in self.arg_type:
+                self.raise_arg_wrong_type_error()
+        # else:
+        # elif self.arg_value is not None:
+        # arg_types: list[tuple] = []
+        # for i in self.arg_type:
+        #     if typing.get_origin(i) is None and i is not None:
+        #         if type(self.arg_value) is type(i):
+        #             break
+        #     elif (
+        #         typing.get_origin(i) is not None
+        #         and len(typing.get_args(i)) < 1
+        #         and i is not None
+        #     ):
+        #         pass
+        #     else:
+        #         arg_types.append((typing.get_origin(i), typing.get_args(i)))
+        # else:
+        #     break_loop = False
+        #     for o, a in arg_types:
+        #         if typing.get_origin(self.arg_value) is o:
+        #             for i in a:
+        #                 if typing.get_origin(i) is None:
+        #                     if (
+        #                         type(i) is type(ArgType)
+        #                         and type(self.arg_value) is i
+        #                     ):
+        #                         break_loop = True
+        #                         break
+        #                     elif (
+        #                         type(i) is not type(ArgType) and self.arg_value == i
+        #                     ):
+        #                         break_loop = True
+        #                         break
+        #             if break_loop is True:
+        #                 break
+        #     else:
+        #         self.raise_arg_wrong_type_error()
         # else:
         # self.raise_arg_wrong_type_error()
         #
