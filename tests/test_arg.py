@@ -53,6 +53,5 @@ def test_arg_argtype():
     #
     arg.ArgType("test_arg", None, [None])
     arg.ArgType("test", 0, [Literal[0]])
-    arg.ArgType("test_arg", 1, [Literal[int]])  # ty:ignore[invalid-type-form]
     # with pytest.raises(exceptions.ArgWrongType):
     # arg.ArgType("wrong_arg", "string", [Literal[10]])

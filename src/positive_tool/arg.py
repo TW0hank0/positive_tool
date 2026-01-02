@@ -57,7 +57,7 @@ class ArgType:
 
     def check_value_type(self) -> None | typing.NoReturn:
         #
-        if self.arg_value is None:
+        if self.arg_value is None or type(self.arg_value) is type(None):
             if None not in self.arg_type:
                 self.raise_arg_wrong_type_error()
             else:
