@@ -1,8 +1,8 @@
 import os
 import logging
-import enum
+#import enum
 
-from typing import SupportsInt, Self
+from typing import SupportsInt, Self, Literal
 
 from rich.logging import RichHandler
 
@@ -59,34 +59,54 @@ def find_project_path(
     return project_path
 
 
-@enum.unique
-class LogLevel(enum.IntEnum):
-    """
-    這個class的功能是 type hint
-    """
+# class LogLevelOld(enum.IntEnum):
+#     """
+#     這個class的功能是 type hint
+#     """
 
-    CRITICAL = logging.CRITICAL
-    ERROR = logging.ERROR
-    WARNING = logging.WARNING
-    INFO = logging.INFO
-    DEBUG = logging.DEBUG
-    NOTSET = logging.NOTSET
+#     CRITICAL = logging.CRITICAL
+#     ERROR = logging.ERROR
+#     WARNING = logging.WARNING
+#     INFO = logging.INFO
+#     DEBUG = logging.DEBUG
+#     NOTSET = logging.NOTSET
+
+#     @classmethod
+#     def to_int(cls, level) -> int:
+#         #
+#         arg_level = ArgType("level", level, [LogLevel])
+#         #
+#         match level:
+#             case LogLevel.NOTSET:
+#                 return int(logging.NOTSET)
+#             case LogLevel.DEBUG:
+#                 return int(logging.DEBUG)
+#             case LogLevel.INFO:
+#                 return int(logging.INFO)
+#             case LogLevel.WARNING:
+#                 return int(logging.WARNING)
+#             case LogLevel.ERROR:
+#                 return int(logging.ERROR)
+#             case LogLevel.CRITICAL:
+#                 return int(logging.CRITICAL)
+#             case _:
+#                 arg_level.raise_arg_wrong_type_error()
 
 
 def build_logger(
     log_file_path: str | os.PathLike,
     logger_name: str | None = None,
-    log_level_file: LogLevel = LogLevel.DEBUG,
-    log_level_console: LogLevel = LogLevel.WARNING,
+    log_level_file: Literal[0, 10, 20, 30, 40, 50] = 10,
+    log_level_console: Literal[0, 10, 20, 30, 40, 50] = 20,
     *,
     with_rich_traceback: bool = True,
 ) -> logging.Logger:
     # 檢查參數類型
     ArgType("log_file_path", log_file_path, [str, os.PathLike])
     ArgType("logger_name", logger_name, [str, None])
-    ArgType("log_level_file", log_level_file, LogLevel)
-    ArgType("log_level_console", log_level_console, LogLevel)
-    ArgType("with_rich_traceback", with_rich_traceback, bool)
+    ArgType("log_level_file", log_level_file, [0, 10, 20, 30, 40, 50])
+    ArgType("log_level_console", log_level_console, [0, 10, 20, 30, 40, 50])
+    ArgType("with_rich_traceback", with_rich_traceback, [bool])
     # build_logger
     format = "%(asctime)s | %(name)s | %(levelname)s | [%(filename)s:%(lineno)d::%(funcName)s] | %(message)s"
     time_format = "[%Y-%m-%d %H:%M:%S]"
@@ -118,12 +138,14 @@ class UInt:
 
     def __init__(self, value: int | float | str | SupportsInt | Self) -> None:
         #
-        ArgType("value", value, [int, float, str, SupportsInt, UInt])
+        arg_value = ArgType("value", value, [int, float, str, SupportsInt, UInt])
         #
         if type(value) is int:
             value_int = value
         elif type(value) in [float, str, SupportsInt]:
             value_int = int(value)
+        else:
+            arg_value.raise_arg_wrong_type_error()
         #
         if value_int < 0:
             raise exceptions.UIntValueError("UInt不能小於零！")

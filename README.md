@@ -15,3 +15,6 @@ uv run pytest
 
 ### 貢獻
 - 歡迎提交 issue 和 pull request。
+
+### 已知問題
+- type hint錯誤（像：`Literal`）

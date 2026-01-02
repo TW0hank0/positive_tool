@@ -55,63 +55,130 @@ class ArgType:
         if do_check_value_type is True:
             self.check_value_type()
 
-    def check_value_type(self) -> None:
+    def check_value_type(self) -> None | typing.NoReturn:
+        #
         if self.arg_value is None:
             if None not in self.arg_type:
                 self.raise_arg_wrong_type_error()
-        elif (
-            self.arg_value is not None
-            and type(self.arg_type) is type(ArgType)  # 確定是class，非數值
-            and typing.get_origin(self.arg_value) is None
-            and len(typing.get_args(self.arg_value)) < 1
+            else:
+                return None
+        if (typing.get_origin(self.arg_value) is None) and (
+            (len(typing.get_args(self.arg_value)) < 1)
+            or (typing.get_args(self.arg_value) == ())
         ):
-            for i in self.arg_type:
-                if typing.get_origin(i) is not None:
+            # 不是type hint用
+            if type(self.arg_value) is type(ArgType):
+                for i in self.arg_type:
+                    if type(i) is type(ArgType):
+                        if self.arg_value is i:
+                            break
+                    elif type(i) is not type(ArgType):
+                        if self.arg_value is type(i):
+                            break
+            elif type(self.arg_value) is not type(ArgType):
+                # self.arg_value是value
+                for i in self.arg_type:
+                    if type(i) is type(ArgType):
+                        # i是class時
+                        if type(self.arg_value) is i:
+                            break
+                    elif type(i) is not type(ArgType):
+                        if type(self.arg_value) is type(i):
+                            break
+                else:
+                    self.raise_arg_wrong_type_error()
+        elif typing.get_origin(self.arg_value) is not None and (
+            len(typing.get_args(self.arg_value)) < 1
+            or typing.get_args(self.arg_value) == ()
+        ):
+            # origin = typing.get_origin(self.arg_value)
+            args: tuple = typing.get_args(self.arg_value)
+            break_loop = False
+            for a in args:
+                if type(a) is type(ArgType):
+                    for i in self.arg_type:
+                        if type(i) is type(ArgType):
+                            if i is a:
+                                break_loop = True
+                                break
+                        elif type(i) is not type(ArgType):
+                            if type(i) is a:
+                                break_loop = True
+                                break
+                elif type(a) is not type(ArgType):
+                    for i in self.arg_type:
+                        if type(i) is type(ArgType):
+                            if type(a) is i:
+                                break_loop = True
+                                break
+                        elif type(i) is not type(ArgType):
+                            if type(a) is type(i) and a == i:
+                                break_loop = True
+                                break
+                if break_loop is True:
+                    break_loop = False
                     break
             else:
-                if type(self.arg_value) not in self.arg_type:
-                    self.raise_arg_wrong_type_error()
-            # self.raise_arg_wrong_type_error()
-        elif (
-            self.arg_value is not None
-            and (
-                type(self.arg_value) is not type(ArgType)
-            )  # 確定是數值非class（資料類型）
-            #and typing.get_origin(self.arg_value) is None
-        ):
-            break_loop = False
-            for i in self.arg_type:
-                if typing.get_origin(i) is None:
-                    if (
-                        type(i) is type(ArgType)
-                        and type(self.arg_value) is not type(ArgType)
-                        and type(self.arg_value) is i
-                    ):  # `i` 是class，但`self.arg_value`是數值
-                        break
-                    elif (
-                        type(i) is not type(ArgType)
-                        and type(i) is type(self.arg_value)
-                        and i == self.arg_value
-                    ):  # `i` 是數值，`self.arg_value`也是數值
-                        break
-                elif typing.get_origin(i) is not None and len(typing.get_args(i)) > 0:
-                    for arg in typing.get_args(i):
-                        if type(arg) is type(ArgType):
-                            if type(self.arg_value) is type(arg):
-                                break_loop = True
-                                break
-                        elif type(arg) is not type(ArgType):
-                            if (
-                                type(self.arg_value) is type(arg)
-                                and self.arg_value == arg
-                            ):
-                                break_loop = True
-                                break
-                    if break_loop is True:
-                        break
-            else:
-                # if type(self.arg_value) not in self.arg_type:
                 self.raise_arg_wrong_type_error()
+        else:
+            self.raise_arg_wrong_type_error()
+        #
+        # if self.arg_value is None:
+        #     if None not in self.arg_type:
+        #         self.raise_arg_wrong_type_error()
+        # elif (
+        #     self.arg_value is not None
+        #     and type(self.arg_value) is type(ArgType)  # 確定是class，非數值
+        #     and typing.get_origin(self.arg_value) is None
+        #     and len(typing.get_args(self.arg_value)) < 1
+        # ):
+        #     for i in self.arg_type:
+        #         if typing.get_origin(i) is not None:
+        #             break
+        #     else:
+        #         if type(self.arg_value) not in self.arg_type:
+        #             self.raise_arg_wrong_type_error()
+        #     # self.raise_arg_wrong_type_error()
+        # elif (
+        #     self.arg_value is not None
+        #     and (
+        #         type(self.arg_value) is not type(ArgType)
+        #     )  # 確定是數值非class（資料類型）
+        #     #and typing.get_origin(self.arg_value) is None
+        # ):
+        #     break_loop = False
+        #     for i in self.arg_type:
+        #         if typing.get_origin(i) is None:
+        #             if (
+        #                 type(i) is type(ArgType)
+        #                 and type(self.arg_value) is not type(ArgType)
+        #                 and type(self.arg_value) is i
+        #             ):  # `i` 是class，但`self.arg_value`是數值
+        #                 break
+        #             elif (
+        #                 type(i) is not type(ArgType)
+        #                 and type(i) is type(self.arg_value)
+        #                 and i == self.arg_value
+        #             ):  # `i` 是數值，`self.arg_value`也是數值
+        #                 break
+        #         elif typing.get_origin(i) is not None and len(typing.get_args(i)) > 0:
+        #             for arg in typing.get_args(i):
+        #                 if type(arg) is type(ArgType):
+        #                     if type(self.arg_value) is type(arg):
+        #                         break_loop = True
+        #                         break
+        #                 elif type(arg) is not type(ArgType):
+        #                     if (
+        #                         type(self.arg_value) is type(arg)
+        #                         and self.arg_value == arg
+        #                     ):
+        #                         break_loop = True
+        #                         break
+        #             if break_loop is True:
+        #                 break
+        #     else:
+        #         # if type(self.arg_value) not in self.arg_type:
+        #         self.raise_arg_wrong_type_error()
         # else:
         # elif self.arg_value is not None:
         # arg_types: list[tuple] = []
@@ -188,7 +255,7 @@ class ArgType:
             elif self.is_folder is True:
                 raise FileExistsError(f"資料夾已存在： {self.arg_value}")
 
-    def raise_arg_wrong_type_error(self):
+    def raise_arg_wrong_type_error(self) -> typing.NoReturn:
         raise exceptions.ArgWrongType(
             f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
         )
