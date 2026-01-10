@@ -17,4 +17,4 @@ uv run pytest
 - 歡迎提交 issue 和 pull request。
 
 ### 已知問題
-- type hint錯誤（像：`Literal`）
+- `arg.ArgType`的type hint錯誤（像：`Literal`）

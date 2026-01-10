@@ -17,6 +17,7 @@ class ArgType:
         "is_folder",
         "is_exists",
         "check_dir_already_exists",
+        "exists_file_size_limit_mb",
     ]
 
     def __init__(
@@ -30,13 +31,41 @@ class ArgType:
         is_file: bool = False,
         is_folder: bool = False,
         check_dir_already_exists: bool = False,
+        exists_file_size_limit_mb: int = 10,
     ) -> None:
+        """
+        __init__ 的 Docstring
+
+        :param arg_name: arg名稱
+        :type arg_name: str
+        :param arg_value: 參數值
+        :type arg_value: Any
+        :param arg_type: 參數類別
+        :type arg_type: list[Any] | Iterable | Any
+        :param do_check_value_type: init後檢查參數
+        :type do_check_value_type: bool
+        :param is_exists: 是否存在
+        :type is_exists: bool
+        :param is_file: 是否為檔案
+        :type is_file: bool
+        :param is_folder: 是否是資料夾
+        :type is_folder: bool
+        :param check_dir_already_exists: 說明
+        :type check_dir_already_exists: bool
+        :param exists_file_size_limit_mb: 檔案大小限制，單位是MB，小於1代表無限制大小
+        :type exists_file_size_limit_mb: int
+        """
+        # TODO: 整理程式碼
         # 檢查參數
         if is_file is True and is_folder is True:
-            raise exceptions.ArgWrongType("`is_file` 和 `is_folder` 不能同時使用")
-        if ((is_exists is True) or (is_file is True) or (is_folder is True)) and type(
-            arg_value
-        ) not in [str, os.PathLike]:
+            raise exceptions.ArgWrongType(
+                "`is_file` 和 `is_folder` 不能同時使用"
+            )
+        if (
+            (is_exists is True)
+            or (is_file is True)
+            or (is_folder is True)
+        ) and type(arg_value) not in [str, os.PathLike]:
             raise exceptions.ArgWrongType("`is_exists` 參數錯誤！")
         #
         self.arg_name: str = arg_name
@@ -51,13 +80,16 @@ class ArgType:
         self.is_file: bool = is_file
         self.is_folder: bool = is_folder
         self.check_dir_already_exists: bool = check_dir_already_exists
+        self.exists_file_size_limit_mb = exists_file_size_limit_mb
         #
         if do_check_value_type is True:
             self.check_value_type()
 
     def check_value_type(self) -> None | typing.NoReturn:
         #
-        if self.arg_value is None or type(self.arg_value) is type(None):
+        if self.arg_value is None or type(self.arg_value) is type(
+            None
+        ):
             if None not in self.arg_type:
                 self.raise_arg_wrong_type_error()
             else:
@@ -88,8 +120,8 @@ class ArgType:
                 else:
                     self.raise_arg_wrong_type_error()
         elif typing.get_origin(self.arg_value) is not None and (
-            len(typing.get_args(self.arg_value)) < 1
-            or typing.get_args(self.arg_value) == ()
+            len(typing.get_args(self.arg_value)) > 1
+            or typing.get_args(self.arg_value) != ()
         ):
             # origin = typing.get_origin(self.arg_value)
             args: tuple = typing.get_args(self.arg_value)
@@ -122,128 +154,73 @@ class ArgType:
                 self.raise_arg_wrong_type_error()
         else:
             self.raise_arg_wrong_type_error()
-        #
-        # if self.arg_value is None:
-        #     if None not in self.arg_type:
-        #         self.raise_arg_wrong_type_error()
-        # elif (
-        #     self.arg_value is not None
-        #     and type(self.arg_value) is type(ArgType)  # 確定是class，非數值
-        #     and typing.get_origin(self.arg_value) is None
-        #     and len(typing.get_args(self.arg_value)) < 1
-        # ):
-        #     for i in self.arg_type:
-        #         if typing.get_origin(i) is not None:
-        #             break
-        #     else:
-        #         if type(self.arg_value) not in self.arg_type:
-        #             self.raise_arg_wrong_type_error()
-        #     # self.raise_arg_wrong_type_error()
-        # elif (
-        #     self.arg_value is not None
-        #     and (
-        #         type(self.arg_value) is not type(ArgType)
-        #     )  # 確定是數值非class（資料類型）
-        #     #and typing.get_origin(self.arg_value) is None
-        # ):
-        #     break_loop = False
-        #     for i in self.arg_type:
-        #         if typing.get_origin(i) is None:
-        #             if (
-        #                 type(i) is type(ArgType)
-        #                 and type(self.arg_value) is not type(ArgType)
-        #                 and type(self.arg_value) is i
-        #             ):  # `i` 是class，但`self.arg_value`是數值
-        #                 break
-        #             elif (
-        #                 type(i) is not type(ArgType)
-        #                 and type(i) is type(self.arg_value)
-        #                 and i == self.arg_value
-        #             ):  # `i` 是數值，`self.arg_value`也是數值
-        #                 break
-        #         elif typing.get_origin(i) is not None and len(typing.get_args(i)) > 0:
-        #             for arg in typing.get_args(i):
-        #                 if type(arg) is type(ArgType):
-        #                     if type(self.arg_value) is type(arg):
-        #                         break_loop = True
-        #                         break
-        #                 elif type(arg) is not type(ArgType):
-        #                     if (
-        #                         type(self.arg_value) is type(arg)
-        #                         and self.arg_value == arg
-        #                     ):
-        #                         break_loop = True
-        #                         break
-        #             if break_loop is True:
-        #                 break
-        #     else:
-        #         # if type(self.arg_value) not in self.arg_type:
-        #         self.raise_arg_wrong_type_error()
-        # else:
-        # elif self.arg_value is not None:
-        # arg_types: list[tuple] = []
-        # for i in self.arg_type:
-        #     if typing.get_origin(i) is None and i is not None:
-        #         if type(self.arg_value) is type(i):
-        #             break
-        #     elif (
-        #         typing.get_origin(i) is not None
-        #         and len(typing.get_args(i)) < 1
-        #         and i is not None
-        #     ):
-        #         pass
-        #     else:
-        #         arg_types.append((typing.get_origin(i), typing.get_args(i)))
-        # else:
-        #     break_loop = False
-        #     for o, a in arg_types:
-        #         if typing.get_origin(self.arg_value) is o:
-        #             for i in a:
-        #                 if typing.get_origin(i) is None:
-        #                     if (
-        #                         type(i) is type(ArgType)
-        #                         and type(self.arg_value) is i
-        #                     ):
-        #                         break_loop = True
-        #                         break
-        #                     elif (
-        #                         type(i) is not type(ArgType) and self.arg_value == i
-        #                     ):
-        #                         break_loop = True
-        #                         break
-        #             if break_loop is True:
-        #                 break
-        #     else:
-        #         self.raise_arg_wrong_type_error()
-        # else:
-        # self.raise_arg_wrong_type_error()
-        #
         if self.is_exists is True and self.arg_value is not None:
             match os.path.exists(self.arg_value):  # type: ignore
                 case False:
                     # if os.path.exists(self.arg_value) is False:
                     if self.is_file is True:
-                        raise FileNotFoundError(f"找不到檔案： {self.arg_value}")
+                        raise FileNotFoundError(
+                            f"找不到檔案： {self.arg_value}"
+                        )
                     elif self.is_folder is True:
-                        raise FileNotFoundError(f"找不到資料夾： {self.arg_value}")
+                        raise FileNotFoundError(
+                            f"找不到資料夾： {self.arg_value}"
+                        )
                 case True:
-                    # elif os.path.exists(self.arg_value) is True:
-                    if self.is_file is True and (
-                        os.path.isfile(self.arg_value) is False  # type: ignore
-                        or os.path.isdir(self.arg_value) is True  # type: ignore
-                    ):
-                        raise exceptions.DirWrongType(
-                            f"應為檔案卻是資料夾： {self.arg_value}"
-                        )
-                    #
-                    if self.is_folder is True and (
-                        os.path.isdir(self.arg_value) is False  # type: ignore
-                        or os.path.isfile(self.arg_value) is True  # type: ignore
-                    ):
-                        raise exceptions.DirWrongType(
-                            f"應為資料夾卻是檔案： {self.arg_value}"
-                        )
-        # self.is_exists is False
+                    # TODO:整理程式碼
+                    if type(self.arg_value) is str:
+                        match os.path.isfile(self.arg_value):  # type: ignore
+                            case True:
+                                if self.is_folder is True:
+                                    raise exceptions.DirWrongType(
+                                        f"應為資料夾卻是檔案： {self.arg_value}"
+                                    )
+                                elif self.is_file is True and (
+                                    self.exists_file_size_limit_mb > 0
+                                ):
+                                    if (
+                                        os.path.getsize(
+                                            self.arg_value  # type: ignore
+                                        )
+                                        > 0
+                                    ) and (
+                                        (
+                                            os.path.getsize(
+                                                self.arg_value  # type: ignore
+                                            )
+                                            / 1000
+                                            / 1000
+                                        )
+                                        <= self.exists_file_size_limit_mb
+                                    ):
+                                        self.raise_arg_wrong_type_error()
+                            case False:
+                                if self.is_file is True:
+                                    raise exceptions.DirWrongType(
+                                        f"應為檔案卻是資料夾： {self.arg_value}"
+                                    )
+                    else:
+                        self.raise_arg_wrong_type_error()
+
+                    # if (
+                    #     self.is_file is True
+                    #     and (type(self.arg_value) is str)
+                    #     and (
+                    #         os.path.isfile(self.arg_value) is False  # type: ignore
+                    #         or os.path.isdir(self.arg_value) is True  # type: ignore
+                    #     )
+                    # ):
+                    #     raise exceptions.DirWrongType(
+                    #         f"應為檔案卻是資料夾： {self.arg_value}"
+                    #     )
+                    # #
+                    # if self.is_folder is True and (
+                    #     os.path.isdir(self.arg_value) is False  # type: ignore
+                    #     or os.path.isfile(self.arg_value) is True  # type: ignore
+                    # ):
+                    #     raise exceptions.DirWrongType(
+                    #         f"應為資料夾卻是檔案： {self.arg_value}"
+                    #     )
         elif (
             self.is_exists is False
             and self.check_dir_already_exists is True
@@ -251,9 +228,13 @@ class ArgType:
             and os.path.exists(self.arg_value) is True  # type: ignore
         ):
             if self.is_file is True:
-                raise FileExistsError(f"檔案已存在： {self.arg_value}")
+                raise FileExistsError(
+                    f"檔案已存在： {self.arg_value}"
+                )
             elif self.is_folder is True:
-                raise FileExistsError(f"資料夾已存在： {self.arg_value}")
+                raise FileExistsError(
+                    f"資料夾已存在： {self.arg_value}"
+                )
 
     def raise_arg_wrong_type_error(self) -> typing.NoReturn:
         raise exceptions.ArgWrongType(

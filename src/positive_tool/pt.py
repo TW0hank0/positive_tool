@@ -1,8 +1,8 @@
 import os
 import logging
-#import enum
+import tomllib
 
-from typing import SupportsInt, Self, Literal
+from typing import SupportsInt, Self, Literal, Union, Any, NoReturn
 
 from rich.logging import RichHandler
 
@@ -12,7 +12,9 @@ from .arg import ArgType
 
 def find_project_path(
     project_name: str,
-    start_find_path: os.PathLike | str = os.path.abspath(os.path.dirname(__file__)),
+    start_find_path: os.PathLike | str = os.path.abspath(
+        os.path.dirname(__file__)
+    ),
     *,
     dir_deep_max: int = 15,
 ) -> os.PathLike | str:
@@ -47,9 +49,14 @@ def find_project_path(
         if os.path.basename(project_path) == project_name:
             break
         else:
-            project_path = os.path.normpath(os.path.join(project_path, ".."))
+            project_path = os.path.normpath(
+                os.path.join(project_path, "..")
+            )
             if len(project_path_log) > 0:
-                if project_path == project_path_log[(len(project_path_log) - 1)]:
+                if (
+                    project_path
+                    == project_path_log[(len(project_path_log) - 1)]
+                ):
                     raise exceptions.DirNotFoundError(
                         f"找不到： {project_name}，已搜尋深度： {dir_deep_count}，已搜尋資料夾： {project_path_log}"
                     )
@@ -57,40 +64,6 @@ def find_project_path(
         dir_deep_count += 1
     del project_path_log
     return project_path
-
-
-# class LogLevelOld(enum.IntEnum):
-#     """
-#     這個class的功能是 type hint
-#     """
-
-#     CRITICAL = logging.CRITICAL
-#     ERROR = logging.ERROR
-#     WARNING = logging.WARNING
-#     INFO = logging.INFO
-#     DEBUG = logging.DEBUG
-#     NOTSET = logging.NOTSET
-
-#     @classmethod
-#     def to_int(cls, level) -> int:
-#         #
-#         arg_level = ArgType("level", level, [LogLevel])
-#         #
-#         match level:
-#             case LogLevel.NOTSET:
-#                 return int(logging.NOTSET)
-#             case LogLevel.DEBUG:
-#                 return int(logging.DEBUG)
-#             case LogLevel.INFO:
-#                 return int(logging.INFO)
-#             case LogLevel.WARNING:
-#                 return int(logging.WARNING)
-#             case LogLevel.ERROR:
-#                 return int(logging.ERROR)
-#             case LogLevel.CRITICAL:
-#                 return int(logging.CRITICAL)
-#             case _:
-#                 arg_level.raise_arg_wrong_type_error()
 
 
 def build_logger(
@@ -102,21 +75,40 @@ def build_logger(
     with_rich_traceback: bool = True,
 ) -> logging.Logger:
     # 檢查參數類型
-    ArgType("log_file_path", log_file_path, [str, os.PathLike])
+    ArgType(
+        "log_file_path",
+        log_file_path,
+        [str, os.PathLike],
+    )
     ArgType("logger_name", logger_name, [str, None])
-    ArgType("log_level_file", log_level_file, [0, 10, 20, 30, 40, 50])
-    ArgType("log_level_console", log_level_console, [0, 10, 20, 30, 40, 50])
-    ArgType("with_rich_traceback", with_rich_traceback, [bool])
+    ArgType(
+        "log_level_file",
+        log_level_file,
+        [0, 10, 20, 30, 40, 50],
+    )
+    ArgType(
+        "log_level_console",
+        log_level_console,
+        [0, 10, 20, 30, 40, 50],
+    )
+    ArgType(
+        "with_rich_traceback",
+        with_rich_traceback,
+        [bool],
+    )
     # build_logger
     format = "%(asctime)s | %(name)s | %(levelname)s | [%(filename)s:%(lineno)d::%(funcName)s] | %(message)s"
     time_format = "[%Y-%m-%d %H:%M:%S]"
     # 建立 RichHandler
     console_handler = RichHandler(
-        rich_tracebacks=with_rich_traceback, tracebacks_show_locals=True
+        rich_tracebacks=with_rich_traceback,
+        tracebacks_show_locals=True,
     )
     console_handler.setLevel(log_level_console)
     # 建立 FileHandler
-    file_handler = logging.FileHandler(log_file_path, encoding="utf-8", mode="a")
+    file_handler = logging.FileHandler(
+        log_file_path, encoding="utf-8", mode="a"
+    )
     file_handler.setLevel(log_level_file)
     # 設定 Formatter
     formatter = logging.Formatter(fmt=format, datefmt=time_format)
@@ -136,13 +128,24 @@ class UInt:
 
     __slot__: list[str] = ["value"]
 
-    def __init__(self, value: int | float | str | SupportsInt | Self) -> None:
+    def __init__(
+        self,
+        value: int | float | str | SupportsInt | Self,
+    ) -> None:
         #
-        arg_value = ArgType("value", value, [int, float, str, SupportsInt, UInt])
+        arg_value = ArgType(
+            "value",
+            value,
+            [int, float, str, SupportsInt, UInt],
+        )
         #
         if type(value) is int:
             value_int = value
-        elif type(value) in [float, str, SupportsInt]:
+        elif type(value) in [
+            float,
+            str,
+            SupportsInt,
+        ]:
             value_int = int(value)
         else:
             arg_value.raise_arg_wrong_type_error()
@@ -380,3 +383,211 @@ class UInt:
 
     def __repr__(self) -> str:
         return f"UInt({self.value})"
+
+
+def bytes_to_mb(size: int):  # TODO: 寫測試
+    return size / 1000 / 1000
+
+
+def get_project_info(
+    pyproject_file_path: str,
+) -> "ProjectInfo":  # TODO: 寫測試
+    #
+    ArgType(
+        "pyproject_file_path",
+        pyproject_file_path,
+        [str],
+        is_exists=True,
+        is_file=True,
+    )
+    #
+    if bytes_to_mb(os.path.getsize(pyproject_file_path)) > 10:
+        raise exceptions.FileTooLarge(
+            f"檔案過大，檔案：「{pyproject_file_path}」"
+        )
+    else:
+        with open(pyproject_file_path, "r") as f:
+            file_str = f.read()
+        data = tomllib.loads(file_str)
+        name = data["project"]["name"]
+        version = data["project"]["version"]
+        return ProjectInfo(
+            name, project_version=version, auto_get=False
+        )
+
+
+class SemVer:  # TODO: 寫測試
+    """語意化版本（SemVer）
+
+    [詳見：https://semver.org/lang/zh-TW/](https://semver.org/lang/zh-TW/)
+
+    `positive_tool`
+    """
+
+    major: Union[UInt, int]
+    minor: Union[UInt, int]
+    patch: Union[UInt, int]
+    __slot__ = ["major", "minor", "patch"]
+
+    def __init__(
+        self,
+        major: Union[UInt, int],
+        minor: Union[UInt, int],
+        patch: Union[UInt, int] = UInt(0),
+    ) -> None:
+        #
+        ArgType("major", major, [UInt, int])
+        ArgType("minor", minor, [UInt, int])
+        ArgType("patch", patch, [UInt, int])
+        #
+        if type(major) is UInt:
+            self.major = major
+        else:
+            self.major = UInt(major)
+        if type(major) is UInt:
+            self.minor = minor
+        else:
+            self.minor = UInt(minor)
+        if type(major) is UInt:
+            self.patch = patch
+        else:
+            self.patch = UInt(patch)
+
+    @classmethod
+    def parse(
+        cls, item: Union[tuple[int, int, int], list[int], Self, str]
+    ) -> Self | NoReturn:  # type: ignore
+        #
+        arg_item = ArgType("item", item, [tuple, list, SemVer, str])
+        #
+        if type(item) in [SemVer]:
+            return cls(item.major, item.minor, item.patch)  # type: ignore
+        elif type(item) in [tuple, list]:
+            if len(item) > 3 or len(item) < 2:  # type: ignore
+                arg_item.raise_arg_wrong_type_error()
+            else:
+                return cls(*item)  # type: ignore
+        elif type(item) in [str]:
+            ver: list[str] = item.split(".", 3)  # type: ignore
+            if len(ver) > 3 or len(ver) < 2:
+                arg_item.raise_arg_wrong_type_error()
+            else:
+                return cls(*[int(i) for i in ver])
+        else:
+            arg_item.raise_arg_wrong_type_error()
+
+    def __gt__(self, other: Self) -> bool:
+        """符號：`>`"""
+        #
+        ArgType("other", other, [SemVer])
+        #
+        if (
+            self.major > other.major
+            or (
+                self.major >= other.major and self.minor > other.minor
+            )
+            or (
+                self.major >= other.major
+                and self.minor >= other.minor
+                and self.patch > other.patch
+            )
+        ):
+            return True
+        else:
+            return False
+
+    def __lt__(self, other: Self) -> bool | NoReturn:
+        """符號：`<`"""
+        #
+        ArgType("other", other, [SemVer])
+        #
+        if (
+            (
+                self.patch < other.patch
+                and self.minor <= other.minor
+                and self.major <= other.major
+            )
+            or (
+                self.minor < other.minor and self.major <= other.major
+            )
+            or (self.major < other.major)
+        ):
+            return True
+        else:
+            return False
+
+    def __eq__(self, other: Self | Any) -> bool | NoReturn:
+        if type(other) is SemVer:
+            return (
+                self.major == other.major
+                and self.minor == other.minor
+                and self.patch == other.patch
+            )
+        else:
+            raise NotImplementedError
+
+    def __str__(self) -> str:
+        return f"{self.major}.{self.minor}.{self.patch}"
+
+    def __repr__(self) -> str:
+        return f"SemVer({self.major}, {self.minor}, {self.patch})"
+
+
+class ProjectInfo:  # TODO: 寫測試
+    """專案資訊
+
+    `positive_tool`
+    """
+
+    project_name: str
+    project_path: str | os.PathLike | None
+    project_version: SemVer | tuple[int, int, int]
+    project_license_file_path: str | None
+    __slot__: list[str] = [
+        "project_name",
+        "project_path",
+        "project_version",
+        "project_license_file_path",
+    ]
+
+    def __init__(
+        self,
+        project_name: str,
+        *,
+        project_path: str | os.PathLike | None = None,
+        project_version: SemVer | tuple[int, int, int] | None = None,
+        project_license_file_path: str | None = None,
+        auto_get: bool = True,
+    ) -> None:
+        """
+        __init__ 的 Docstring
+
+        :param project_name: 專案名稱
+        :type project_name: str
+        :param project_path: 專案路徑（位子）
+        :type project_path: str
+        :param project_version: 專案版本
+        :type project_version: SemVer | tuple[int, int, int]
+        :param project_license: 專案協議
+        :type project_license: str
+        """
+        self.project_name = project_name
+        #
+        need_auto_get = False
+        if type(project_version) is SemVer:
+            self.project_version = project_version
+        elif project_version is None:
+            need_auto_get = True
+        else:
+            self.project_version = SemVer.parse(project_version)
+        if project_path is None:
+            self.project_path = find_project_path(self.project_name)
+        else:
+            self.project_path = project_path
+        self.project_license = project_license_file_path
+        if auto_get is True and need_auto_get is True:
+            data_from_file = get_project_info(
+                os.path.join(self.project_path)
+            )
+            if project_version is None:
+                self.project_version = data_from_file.project_version

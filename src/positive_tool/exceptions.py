@@ -1,31 +1,29 @@
-class ArgWrongType(Exception):
+class PositiveToolError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class ArgWrongType(PositiveToolError):
     """參數錯誤"""
 
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
 
-
-class DirDeepError(Exception):
+class DirDeepError(PositiveToolError):
     """`pt.py.find_project_path` 的自訂錯誤"""
 
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+
+class DirNotFoundError(PositiveToolError):
+    """find_project_path：找不到資料夾時"""
 
 
-class DirNotFoundError(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
-
-
-class DirWrongType(Exception):
+class DirWrongType(PositiveToolError):
     """
     用在應為資料夾卻是檔案 或是 應為檔案卻是資料夾 的錯誤
     """
 
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+
+class UIntValueError(PositiveToolError):
+    """UInt錯誤，通常因為非正數（負數）"""
 
 
-class UIntValueError(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+class FileTooLarge(PositiveToolError):
+    """檔案過大"""
