@@ -14,9 +14,9 @@ from positive_tool import exceptions, arg
 
 
 def test_arg_argtype():
-    with pytest.raises(exceptions.ArgWrongType):
+    with pytest.raises(exceptions.ArgTypeWrongTypeError):
         arg.ArgType("test_arg", "test_value", str, is_file=True, is_folder=True)
-    with pytest.raises(exceptions.ArgWrongType):
+    with pytest.raises(exceptions.ArgTypeWrongTypeError):
         arg.ArgType("test_arg", 0, int, is_exists=True)
     with pytest.raises(FileNotFoundError):
         arg.ArgType(

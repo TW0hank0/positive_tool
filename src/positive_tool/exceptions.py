@@ -1,10 +1,19 @@
+#TODO:考慮要不要將pt、arg的錯誤分開放
 class PositiveToolError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
 
-class ArgWrongType(PositiveToolError):
+class ArgTypeError(PositiveToolError):
+    """arg.ArgType的錯誤"""
+
+
+class ArgTypeWrongTypeError(ArgTypeError):
     """參數錯誤"""
+
+
+class ArgTypeInitError(ArgTypeError):
+    """給ArgType的參數錯誤（初始化錯誤）"""
 
 
 class DirDeepError(PositiveToolError):
@@ -16,14 +25,12 @@ class DirNotFoundError(PositiveToolError):
 
 
 class DirWrongType(PositiveToolError):
-    """
-    用在應為資料夾卻是檔案 或是 應為檔案卻是資料夾 的錯誤
-    """
+    """用在應為資料夾卻是檔案 或是 應為檔案卻是資料夾 的錯誤"""
 
 
 class UIntValueError(PositiveToolError):
     """UInt錯誤，通常因為非正數（負數）"""
 
 
-class FileTooLarge(PositiveToolError):
+class FileTooLarge(ArgTypeError):
     """檔案過大"""

@@ -4,4 +4,6 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
+    "editor.defaultFormatter": "ms-python.vscode-pylance",
+    "todo-tree.tree.scanMode": "workspace only",
 }

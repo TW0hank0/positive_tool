@@ -12,9 +12,7 @@ from .arg import ArgType
 
 def find_project_path(
     project_name: str,
-    start_find_path: os.PathLike | str = os.path.abspath(
-        os.path.dirname(__file__)
-    ),
+    start_find_path: os.PathLike | str = os.path.abspath(os.path.dirname(__file__)),
     *,
     dir_deep_max: int = 15,
 ) -> os.PathLike | str:
@@ -49,14 +47,9 @@ def find_project_path(
         if os.path.basename(project_path) == project_name:
             break
         else:
-            project_path = os.path.normpath(
-                os.path.join(project_path, "..")
-            )
+            project_path = os.path.normpath(os.path.join(project_path, ".."))
             if len(project_path_log) > 0:
-                if (
-                    project_path
-                    == project_path_log[(len(project_path_log) - 1)]
-                ):
+                if project_path == project_path_log[(len(project_path_log) - 1)]:
                     raise exceptions.DirNotFoundError(
                         f"找不到： {project_name}，已搜尋深度： {dir_deep_count}，已搜尋資料夾： {project_path_log}"
                     )
@@ -106,9 +99,7 @@ def build_logger(
     )
     console_handler.setLevel(log_level_console)
     # 建立 FileHandler
-    file_handler = logging.FileHandler(
-        log_file_path, encoding="utf-8", mode="a"
-    )
+    file_handler = logging.FileHandler(log_file_path, encoding="utf-8", mode="a")
     file_handler.setLevel(log_level_file)
     # 設定 Formatter
     formatter = logging.Formatter(fmt=format, datefmt=time_format)
@@ -402,18 +393,14 @@ def get_project_info(
     )
     #
     if bytes_to_mb(os.path.getsize(pyproject_file_path)) > 10:
-        raise exceptions.FileTooLarge(
-            f"檔案過大，檔案：「{pyproject_file_path}」"
-        )
+        raise exceptions.FileTooLarge(f"檔案過大，檔案：「{pyproject_file_path}」")
     else:
         with open(pyproject_file_path, "r") as f:
             file_str = f.read()
         data = tomllib.loads(file_str)
         name = data["project"]["name"]
         version = data["project"]["version"]
-        return ProjectInfo(
-            name, project_version=version, auto_get=False
-        )
+        return ProjectInfo(name, project_version=version, auto_get=False)
 
 
 class SemVer:  # TODO: 寫測試
@@ -483,9 +470,7 @@ class SemVer:  # TODO: 寫測試
         #
         if (
             self.major > other.major
-            or (
-                self.major >= other.major and self.minor > other.minor
-            )
+            or (self.major >= other.major and self.minor > other.minor)
             or (
                 self.major >= other.major
                 and self.minor >= other.minor
@@ -507,9 +492,7 @@ class SemVer:  # TODO: 寫測試
                 and self.minor <= other.minor
                 and self.major <= other.major
             )
-            or (
-                self.minor < other.minor and self.major <= other.major
-            )
+            or (self.minor < other.minor and self.major <= other.major)
             or (self.major < other.major)
         ):
             return True
@@ -539,10 +522,10 @@ class ProjectInfo:  # TODO: 寫測試
     `positive_tool`
     """
 
-    project_name: str
-    project_path: str | os.PathLike | None
-    project_version: SemVer | tuple[int, int, int]
-    project_license_file_path: str | None
+    # project_name: str
+    # project_path: str | os.PathLike | None
+    # project_version: SemVer | tuple[int, int, int]
+    # project_license_file_path: str | None
     __slot__: list[str] = [
         "project_name",
         "project_path",
@@ -584,10 +567,29 @@ class ProjectInfo:  # TODO: 寫測試
             self.project_path = find_project_path(self.project_name)
         else:
             self.project_path = project_path
-        self.project_license = project_license_file_path
+        self.project_license_file_path = project_license_file_path
         if auto_get is True and need_auto_get is True:
-            data_from_file = get_project_info(
-                os.path.join(self.project_path)
-            )
+            data_from_file = get_project_info(os.path.join(self.project_path))
             if project_version is None:
                 self.project_version = data_from_file.project_version
+
+    def __repr__(self) -> str:
+        text: str = f"""ProjectInfo(
+    project_name={self.project_name},
+    project_path={self.project_path},
+    project_version={self.project_version},
+    project_license_file_path={self.project_license_file_path},
+)
+"""
+        return text
+
+    def __str__(self) -> str:
+        text = f"""
+ProjectInfo(
+    {self.project_name}:
+        path={self.project_path}
+        version={self.project_version}
+        license_file={self.project_license_file_path}
+)
+"""
+        return text

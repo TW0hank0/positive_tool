@@ -11,7 +11,7 @@ from positive_tool import pt, exceptions
 
 
 def test_find_project_path():
-    with pytest.raises(exceptions.ArgWrongType):
+    with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.find_project_path(
             "positive_tool",
             dir_deep_max="",  # type: ignore
@@ -32,21 +32,21 @@ def test_find_project_path():
 
 
 def test_build_logger():
-    with pytest.raises(exceptions.ArgWrongType):
+    with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.build_logger(0)  # type: ignore
-    with pytest.raises(exceptions.ArgWrongType):
+    with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.build_logger(os.path.join(os.path.dirname(__file__), "test_file"), 0)  # type: ignore
-    with pytest.raises(exceptions.ArgWrongType):
+    with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.build_logger(
             os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
             log_level_file="",  # type: ignore
         )
-    with pytest.raises(exceptions.ArgWrongType):
+    with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.build_logger(
             os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
             log_level_console="",  # type: ignore
         )
-    with pytest.raises(exceptions.ArgWrongType):
+    with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.build_logger(
             os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
             with_rich_traceback="",  # type: ignore
