@@ -13,7 +13,6 @@ wheels/
 .ruff_cache/
 
 #test cache
-#tmp_dir_*
-tmp_dir_test_file
+tmp_test_pt_*
 .pytest_cache/
 .coverage

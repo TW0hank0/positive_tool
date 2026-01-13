@@ -1,4 +1,4 @@
-#TODO:考慮要不要將pt、arg的錯誤分開放
+#TODO:將pt、arg的錯誤分開放
 class PositiveToolError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
@@ -15,6 +15,8 @@ class ArgTypeWrongTypeError(ArgTypeError):
 class ArgTypeInitError(ArgTypeError):
     """給ArgType的參數錯誤（初始化錯誤）"""
 
+class ArgTypeUnknownType(ArgTypeWrongTypeError):
+    """無法確認的類型"""
 
 class DirDeepError(PositiveToolError):
     """`pt.py.find_project_path` 的自訂錯誤"""

@@ -32,27 +32,28 @@ def test_find_project_path():
 
 
 def test_build_logger():
+    test_file_path = os.path.join(os.path.dirname(__file__), "tmp_test_pt_find_project_path")
     with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.build_logger(0)  # type: ignore
     with pytest.raises(exceptions.ArgTypeWrongTypeError):
-        pt.build_logger(os.path.join(os.path.dirname(__file__), "test_file"), 0)  # type: ignore
+        pt.build_logger(os.path.join(os.path.dirname(__file__), test_file_path), 0)  # type: ignore
     with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.build_logger(
-            os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
+            os.path.join(os.path.dirname(__file__), test_file_path),
             log_level_file="",  # type: ignore
         )
     with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.build_logger(
-            os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
+            os.path.join(os.path.dirname(__file__), test_file_path),
             log_level_console="",  # type: ignore
         )
     with pytest.raises(exceptions.ArgTypeWrongTypeError):
         pt.build_logger(
-            os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
+            os.path.join(os.path.dirname(__file__), test_file_path),
             with_rich_traceback="",  # type: ignore
         )
     pt.build_logger(
-        os.path.join(os.path.dirname(__file__), "tmp_dir_test_file"),
+        os.path.join(os.path.dirname(__file__), test_file_path),
     )
 
 
