@@ -22,3 +22,20 @@ uv run pytest
 
 ### 已知問題
 *暫未發現*
+
+### 使用
+```python
+>>> from positive_tool import arg, pt
+>>> from positive_tool.exceptions import exceptions
+>>> 
+def test_func(arg: int):
+    ArgType("arg", arg, [int])
+    print(arg)
+>>> 
+try:
+    test_func("")
+except exceptions.arg.ArgTypeWrongTypeError:
+    pass
+>>>test_func(10)
+10
+```

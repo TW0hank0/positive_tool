@@ -156,6 +156,9 @@ class UInt:
         else:
             self.value = value_int
 
+    def _raise_uint_error(self) -> NoReturn:
+        raise exceptions.pt.UIntValueError("UInt不能小於零！")
+
     def __add__(self, other: int | float | Self):
         """符號：`+`"""
         # arg檢查
@@ -534,10 +537,6 @@ class ProjectInfo:  # TODO: 寫測試
     `positive_tool`
     """
 
-    # project_name: str
-    # project_path: str | os.PathLike | None
-    # project_version: SemVer | tuple[int, int, int]
-    # project_license_file_path: str | None
     __slot__: list[str] = [
         "project_name",
         "project_path",
@@ -600,10 +599,10 @@ class ProjectInfo:  # TODO: 寫測試
     def __str__(self) -> str:
         text = f"""
 ProjectInfo(
-    {self.project_name}:
-        path={self.project_path}
-        version={self.project_version}
-        license_file={self.project_license_file_path}
+└─{self.project_name}:
+    ├─path={self.project_path}
+    ├─version={self.project_version}
+    └─license_file={self.project_license_file_path}
 )
 """
         return text

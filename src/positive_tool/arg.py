@@ -250,24 +250,24 @@ class ArgType:
                                     )
                     else:
                         self.raise_arg_wrong_type_error()
-        elif (
-            self.is_exists is False
-            and self.check_dir_already_exists is True
-            and self.arg_value is not None
-            and (
-                type(self.arg_value) is str
-                or type(self.arg_value) is os.PathLike
-            )
-            and os.path.exists(self.arg_value) is True  # type: ignore
-        ):
-            if self.is_file is True:
-                raise FileExistsError(
-                    f"檔案已存在： {self.arg_value}"
-                )
-            elif self.is_folder is True:
-                raise FileExistsError(
-                    f"資料夾已存在： {self.arg_value}"
-                )
+        # elif (
+        #     self.is_exists is False
+        #     and self.check_dir_already_exists is True
+        #     and self.arg_value is not None
+        #     and (
+        #         type(self.arg_value) is str
+        #         or type(self.arg_value) is os.PathLike
+        #     )
+        #     and os.path.exists(self.arg_value) is True  # type: ignore
+        # ):
+        #     if self.is_file is True:
+        #         raise FileExistsError(
+        #             f"檔案已存在： {self.arg_value}"
+        #         )
+        #     elif self.is_folder is True:
+        #         raise FileExistsError(
+        #             f"資料夾已存在： {self.arg_value}"
+        #         )
 
     def raise_arg_wrong_type_error(self) -> typing.NoReturn:
         # TODO:更改錯誤類型

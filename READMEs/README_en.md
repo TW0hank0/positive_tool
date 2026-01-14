@@ -4,6 +4,8 @@
 
 **The README file should primarily be in Traditional Chinese.**
 
+**README檔案請以正體中文版本為主**
+
 `positive_tool` is a small Python utility library to assist development. It aims to provide small, practical tools.
 
 ### Main Features
@@ -21,3 +23,20 @@ uv run pytest
 
 ### Known Issues
 *None at this time.*
+
+### Use
+```python
+>>> from positive_tool import arg, pt
+>>> from positive_tool.exceptions import exceptions
+>>> 
+def test_func(arg: int):
+    ArgType("arg", arg, [int])
+    print(arg)
+>>> 
+try:
+    test_func("")
+except exceptions.arg.ArgTypeWrongTypeError:
+    pass
+>>>test_func(10)
+10
+```
