@@ -2,7 +2,7 @@ import os
 import logging
 import tomllib
 
-from typing import SupportsInt, Self, Literal, Union, Any, NoReturn
+from typing import Self, Literal, Union, Any, NoReturn
 
 from rich.logging import RichHandler
 
@@ -123,6 +123,9 @@ def build_logger(
     return logging.getLogger(logger_name)
 
 
+type_hint_UInt_init_arg_arg_value = Union[int, float, "UInt"]
+
+
 class UInt:
     """正數"""
 
@@ -130,23 +133,21 @@ class UInt:
 
     def __init__(
         self,
-        value: int | float | str | SupportsInt | Self,
+        value: type_hint_UInt_init_arg_arg_value | Self,
     ) -> None:
         #
         arg_value = ArgType(
             "value",
             value,
-            [int, float, str, SupportsInt, UInt],
+            [type_hint_UInt_init_arg_arg_value, UInt],
         )
         #
         if type(value) is int:
             value_int = value
-        elif type(value) in [
-            float,
-            str,
-            SupportsInt,
-        ]:
+        elif type(value) in [float, UInt]:
             value_int = int(value)
+        # elif isinstance(value, (float, str, SupportsInt)) is True:
+        #     value_int = int(value)
         else:
             arg_value.raise_arg_wrong_type_error()
         #
@@ -154,13 +155,6 @@ class UInt:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             self.value = value_int
-        # if int(value) < 0:
-        # raise exceptions.UIntValueError("UInt不能小於零！")
-        # else:
-        # if isinstance(value, int):
-        # self.value: int = value
-        # elif isinstance(value, (float, str)):
-        # self.value = int(value)
 
     def __add__(self, other: int | float | Self):
         """符號：`+`"""
@@ -376,7 +370,7 @@ class UInt:
     def __int__(self) -> int:
         return self.value
 
-    def __float__(self):
+    def __float__(self) -> float:
         return float(self.value)
 
     def __str__(self) -> str:
@@ -386,7 +380,7 @@ class UInt:
         return f"UInt({self.value})"
 
 
-def bytes_to_mb(size: int):  # TODO: 寫測試
+def bytes_to_mb(size: int) -> float:
     return size / 1000 / 1000
 
 

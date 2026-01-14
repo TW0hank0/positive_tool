@@ -1,7 +1,7 @@
 import os
 
 import typing
-from typing import Any, Iterable, Literal
+from typing import Any, Iterable, Literal, Union
 
 from .exceptions import exceptions
 
@@ -117,7 +117,7 @@ class ArgType:
                             and self.arg_value == i
                         ):
                             break
-                elif typing.get_origin(i) is Literal:
+                elif typing.get_origin(i) in [Literal, Union]:
                     type_hint = typing.get_args(i)
                     break_loop = False
                     for i2 in type_hint:

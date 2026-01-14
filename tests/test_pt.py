@@ -75,7 +75,7 @@ def test_build_logger():
 
 def test_UInt():
     # 加法（`+`）
-    test_var = pt.UInt("100")
+    test_var = pt.UInt(100)
     test_var = test_var + 10
     test_var = test_var + 10.0
     test_var = test_var + pt.UInt(1)
@@ -183,3 +183,12 @@ def test_UInt():
     assert float(pt.UInt(10)) == 10.0
     assert str(pt.UInt(10)) == "10"
     assert repr(pt.UInt(10)) == "UInt(10)"
+    with pytest.raises(
+        expected_exception=exceptions.arg.ArgTypeWrongTypeError
+    ):
+        pt.UInt("")  # type: ignore
+    pt.UInt(pt.UInt(10))
+
+
+def test_bytes_to_mb():
+    assert pt.bytes_to_mb(1000000) == 1
