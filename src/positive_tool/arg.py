@@ -3,7 +3,7 @@ import os
 import typing
 from typing import Any, Iterable, Literal
 
-from . import exceptions
+from .exceptions import exceptions
 
 
 class ArgType:
@@ -55,19 +55,25 @@ class ArgType:
         :param exists_file_size_limit_mb: 檔案大小限制，單位是MB，小於1代表無限制大小
         :type exists_file_size_limit_mb: int
         """
-        #TODO:移除`is_exists`的檢查檔案為存在，只檢查存在
+        # TODO:移除`is_exists`的檢查檔案為存在，只檢查存在
         # TODO: 整理程式碼
         # 檢查參數
         if is_file is True and is_folder is True:
-            raise exceptions.ArgTypeWrongTypeError("`is_file` 和 `is_folder` 不能同時使用")
-        if ((is_exists is True) or (is_file is True) or (is_folder is True)) and type(
-            arg_value
-        ) not in [str, os.PathLike]:
-            raise exceptions.ArgTypeInitError("`is_exists` 參數類型錯誤！")
+            raise exceptions.arg.ArgTypeWrongTypeError(
+                "`is_file` 和 `is_folder` 不能同時使用"
+            )
+        if (
+            (is_exists is True)
+            or (is_file is True)
+            or (is_folder is True)
+        ) and type(arg_value) not in [str, os.PathLike]:
+            raise exceptions.arg.ArgTypeInitError(
+                "`is_exists` 參數類型錯誤！"
+            )
         if (exists_file_size_limit_mb is not None) and (
             (is_exists is False) or (is_file is False)
         ):
-            raise exceptions.ArgTypeInitError(
+            raise exceptions.arg.ArgTypeInitError(
                 "`exists_file_size_limit_mb`只能在檔案存在時使用！"
             )
         #
@@ -83,13 +89,15 @@ class ArgType:
         self.is_file: bool = is_file
         self.is_folder: bool = is_folder
         self.check_dir_already_exists: bool = check_dir_already_exists
-        self.exists_file_size_limit_mb: None | int = exists_file_size_limit_mb
+        self.exists_file_size_limit_mb: None | int = (
+            exists_file_size_limit_mb
+        )
         #
         if do_check_value_type is True:
             self.check_value_type()
 
     def check_value_type(self) -> None | typing.NoReturn:
-        #TODO:待整理程式碼
+        # TODO:待整理程式碼
         if self.arg_value is None:
             if None not in self.arg_type:
                 self.raise_arg_wrong_type_error()
@@ -98,27 +106,33 @@ class ArgType:
         else:
             for i in self.arg_type:
                 if typing.get_origin(i) is None:
-                    #不是type hint
+                    # 不是type hint
                     if type(i) is type(object):
-                        #class
+                        # class
                         if type(self.arg_value) is i:
                             break
                     elif type(i) is not type(object):
-                        if type(self.arg_value) is type(i) and self.arg_value == i:
+                        if (
+                            type(self.arg_value) is type(i)
+                            and self.arg_value == i
+                        ):
                             break
                 elif typing.get_origin(i) is Literal:
                     type_hint = typing.get_args(i)
                     break_loop = False
                     for i2 in type_hint:
                         if type(i2) is type(object):
-                            #class
+                            # class
                             if type(self.arg_value) is i2:
                                 break_loop = True
                                 break
                         elif type(i2) is not type(object):
-                            if type(self.arg_value) is type(i2) and self.arg_value == i2:
+                            if (
+                                type(self.arg_value) is type(i2)
+                                and self.arg_value == i2
+                            ):
                                 break_loop = True
-                                
+
                     if break_loop is True:
                         break
             else:
@@ -152,35 +166,35 @@ class ArgType:
         #         for arg
         #     else:
         #         raise exceptions.ArgTypeUnknownType(f"未知參數類型（type hint參數）！")
-            # # origin = typing.get_origin(self.arg_value)
-            # args: tuple = typing.get_args(self.arg_value)
-            # break_loop = False
-            # for a in args:
-            #     if type(a) is type(ArgType):
-            #         for i in self.arg_type:
-            #             if type(i) is type(object):
-            #                 if i is a:
-            #                     break_loop = True
-            #                     break
-            #             elif type(i) is not type(object):
-            #                 if type(i) is a:
-            #                     break_loop = True
-            #                     break
-            #     elif type(a) is not type(ArgType):
-            #         for i in self.arg_type:
-            #             if type(i) is type(ArgType):
-            #                 if type(a) is i:
-            #                     break_loop = True
-            #                     break
-            #             elif type(i) is not type(ArgType):
-            #                 if (type(a) is type(i)) and (a == i):
-            #                     break_loop = True
-            #                     break
-            #     if break_loop is True:
-            #         break_loop = False
-            #         break
-            # else:
-            #     self.raise_arg_wrong_type_error()
+        # # origin = typing.get_origin(self.arg_value)
+        # args: tuple = typing.get_args(self.arg_value)
+        # break_loop = False
+        # for a in args:
+        #     if type(a) is type(ArgType):
+        #         for i in self.arg_type:
+        #             if type(i) is type(object):
+        #                 if i is a:
+        #                     break_loop = True
+        #                     break
+        #             elif type(i) is not type(object):
+        #                 if type(i) is a:
+        #                     break_loop = True
+        #                     break
+        #     elif type(a) is not type(ArgType):
+        #         for i in self.arg_type:
+        #             if type(i) is type(ArgType):
+        #                 if type(a) is i:
+        #                     break_loop = True
+        #                     break
+        #             elif type(i) is not type(ArgType):
+        #                 if (type(a) is type(i)) and (a == i):
+        #                     break_loop = True
+        #                     break
+        #     if break_loop is True:
+        #         break_loop = False
+        #         break
+        # else:
+        #     self.raise_arg_wrong_type_error()
         # else:
         #     raise exceptions.ArgTypeUnknownType(f"未知參數參數！")
         if self.is_exists is True and self.arg_value is not None:
@@ -188,22 +202,30 @@ class ArgType:
                 case False:
                     # if os.path.exists(self.arg_value) is False:
                     if self.is_file is True:
-                        raise FileNotFoundError(f"找不到檔案： {self.arg_value}")
+                        raise FileNotFoundError(
+                            f"找不到檔案： {self.arg_value}"
+                        )
                     elif self.is_folder is True:
-                        raise FileNotFoundError(f"找不到資料夾： {self.arg_value}")
+                        raise FileNotFoundError(
+                            f"找不到資料夾： {self.arg_value}"
+                        )
                 case True:
                     # TODO:整理程式碼
                     if type(self.arg_value) is str:
                         match os.path.isfile(self.arg_value):  # type: ignore
                             case True:
                                 if self.is_folder is True:
-                                    raise exceptions.DirWrongType(
+                                    raise exceptions.pt.DirWrongType(
                                         f"應為資料夾卻是檔案： {self.arg_value}"
                                     )
                                 elif (
                                     self.is_file is True
-                                    and self.exists_file_size_limit_mb is not None
-                                    and (self.exists_file_size_limit_mb > 0)
+                                    and self.exists_file_size_limit_mb
+                                    is not None
+                                    and (
+                                        self.exists_file_size_limit_mb
+                                        > 0
+                                    )
                                 ):
                                     if (
                                         os.path.getsize(
@@ -223,7 +245,7 @@ class ArgType:
                                         self.raise_arg_wrong_type_error()
                             case False:
                                 if self.is_file is True:
-                                    raise exceptions.DirWrongType(
+                                    raise exceptions.pt.DirWrongType(
                                         f"應為檔案卻是資料夾： {self.arg_value}"
                                     )
                     else:
@@ -232,19 +254,27 @@ class ArgType:
             self.is_exists is False
             and self.check_dir_already_exists is True
             and self.arg_value is not None
-            and (type(self.arg_value) is str or type(self.arg_value) is os.PathLike)
-            and os.path.exists(self.arg_value) is True # type: ignore
+            and (
+                type(self.arg_value) is str
+                or type(self.arg_value) is os.PathLike
+            )
+            and os.path.exists(self.arg_value) is True  # type: ignore
         ):
             if self.is_file is True:
-                raise FileExistsError(f"檔案已存在： {self.arg_value}")
+                raise FileExistsError(
+                    f"檔案已存在： {self.arg_value}"
+                )
             elif self.is_folder is True:
-                raise FileExistsError(f"資料夾已存在： {self.arg_value}")
+                raise FileExistsError(
+                    f"資料夾已存在： {self.arg_value}"
+                )
 
     def raise_arg_wrong_type_error(self) -> typing.NoReturn:
         # TODO:更改錯誤類型
-        raise exceptions.ArgTypeWrongTypeError(
+        raise exceptions.arg.ArgTypeWrongTypeError(
             f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
         )
 
-#TODO:ArgDefault：預設參數
-#TODO:Arg：ArgType、ArgDefault集合體
+
+# TODO:ArgDefault：預設參數
+# TODO:Arg：ArgType、ArgDefault集合體

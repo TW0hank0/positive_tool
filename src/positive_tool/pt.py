@@ -6,13 +6,15 @@ from typing import SupportsInt, Self, Literal, Union, Any, NoReturn
 
 from rich.logging import RichHandler
 
-from . import exceptions
+from .exceptions import exceptions
 from .arg import ArgType
 
 
 def find_project_path(
     project_name: str,
-    start_find_path: os.PathLike | str = os.path.abspath(os.path.dirname(__file__)),
+    start_find_path: os.PathLike | str = os.path.abspath(
+        os.path.dirname(__file__)
+    ),
     *,
     dir_deep_max: int = 15,
 ) -> os.PathLike | str:
@@ -41,16 +43,21 @@ def find_project_path(
     project_path_log: list[str] = []
     while True:
         if dir_deep_count >= dir_deep_max:
-            raise exceptions.DirDeepError(
+            raise exceptions.pt.DirDeepError(
                 f"找不到專案資料夾，已收尋的資料夾深度： {dir_deep_count}，紀錄： {project_path_log}"
             )
         if os.path.basename(project_path) == project_name:
             break
         else:
-            project_path = os.path.normpath(os.path.join(project_path, ".."))
+            project_path = os.path.normpath(
+                os.path.join(project_path, "..")
+            )
             if len(project_path_log) > 0:
-                if project_path == project_path_log[(len(project_path_log) - 1)]:
-                    raise exceptions.DirNotFoundError(
+                if (
+                    project_path
+                    == project_path_log[(len(project_path_log) - 1)]
+                ):
+                    raise exceptions.pt.DirNotFoundError(
                         f"找不到： {project_name}，已搜尋深度： {dir_deep_count}，已搜尋資料夾： {project_path_log}"
                     )
             project_path_log.append(project_path)
@@ -99,7 +106,9 @@ def build_logger(
     )
     console_handler.setLevel(log_level_console)
     # 建立 FileHandler
-    file_handler = logging.FileHandler(log_file_path, encoding="utf-8", mode="a")
+    file_handler = logging.FileHandler(
+        log_file_path, encoding="utf-8", mode="a"
+    )
     file_handler.setLevel(log_level_file)
     # 設定 Formatter
     formatter = logging.Formatter(fmt=format, datefmt=time_format)
@@ -142,7 +151,7 @@ class UInt:
             arg_value.raise_arg_wrong_type_error()
         #
         if value_int < 0:
-            raise exceptions.UIntValueError("UInt不能小於零！")
+            raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             self.value = value_int
         # if int(value) < 0:
@@ -168,7 +177,7 @@ class UInt:
             raise NotImplementedError
         #
         if other_int < 0 and abs(other_int) > self.value:
-            raise exceptions.UIntValueError("UInt不能小於零！")
+            raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             result = UInt(self.value + other_int)
             return result
@@ -185,7 +194,7 @@ class UInt:
             raise NotImplementedError
         #
         if other_int < 0 and abs(other_int) > self.value:
-            raise exceptions.UIntValueError("UInt不能小於零！")
+            raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             self.value += other_int
             return self
@@ -213,7 +222,7 @@ class UInt:
             raise NotImplementedError
         #
         if other_int > 0 and abs(other_int) > self.value:
-            raise exceptions.UIntValueError("UInt不能小於零！")
+            raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             result = UInt(self.value - other_int)
             return result
@@ -230,7 +239,7 @@ class UInt:
             raise NotImplementedError
         #
         if other_int > 0 and abs(other_int) > self.value:
-            raise exceptions.UIntValueError("UInt不能小於零！")
+            raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             self.value -= other_int
             return self
@@ -248,6 +257,7 @@ class UInt:
         """符號：`*`"""
         # ArgType("other", other, [int, float, UInt])
         #
+        # TODO:isinstance改成type
         if isinstance(other, int):
             other_int: int = other
         elif isinstance(other, float):
@@ -258,7 +268,7 @@ class UInt:
             raise NotImplementedError
         #
         if other_int < 0 and other_int != 0:
-            raise exceptions.UIntValueError("UInt不能小於零！")
+            raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             result = UInt(self.value * other_int)
             return result
@@ -277,7 +287,7 @@ class UInt:
             raise NotImplementedError
         #
         if other_int < 0:
-            raise exceptions.UIntValueError("UInt不能小於零！")
+            raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             self.value *= other_int
             return self
@@ -393,14 +403,18 @@ def get_project_info(
     )
     #
     if bytes_to_mb(os.path.getsize(pyproject_file_path)) > 10:
-        raise exceptions.FileTooLarge(f"檔案過大，檔案：「{pyproject_file_path}」")
+        raise exceptions.arg.FileTooLarge(
+            f"檔案過大，檔案：「{pyproject_file_path}」"
+        )
     else:
         with open(pyproject_file_path, "r") as f:
             file_str = f.read()
         data = tomllib.loads(file_str)
         name = data["project"]["name"]
         version = data["project"]["version"]
-        return ProjectInfo(name, project_version=version, auto_get=False)
+        return ProjectInfo(
+            name, project_version=version, auto_get=False
+        )
 
 
 class SemVer:  # TODO: 寫測試
@@ -470,7 +484,9 @@ class SemVer:  # TODO: 寫測試
         #
         if (
             self.major > other.major
-            or (self.major >= other.major and self.minor > other.minor)
+            or (
+                self.major >= other.major and self.minor > other.minor
+            )
             or (
                 self.major >= other.major
                 and self.minor >= other.minor
@@ -492,7 +508,9 @@ class SemVer:  # TODO: 寫測試
                 and self.minor <= other.minor
                 and self.major <= other.major
             )
-            or (self.minor < other.minor and self.major <= other.major)
+            or (
+                self.minor < other.minor and self.major <= other.major
+            )
             or (self.major < other.major)
         ):
             return True
@@ -569,7 +587,9 @@ class ProjectInfo:  # TODO: 寫測試
             self.project_path = project_path
         self.project_license_file_path = project_license_file_path
         if auto_get is True and need_auto_get is True:
-            data_from_file = get_project_info(os.path.join(self.project_path))
+            data_from_file = get_project_info(
+                os.path.join(self.project_path)
+            )
             if project_version is None:
                 self.project_version = data_from_file.project_version
 
