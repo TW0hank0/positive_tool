@@ -1,6 +1,6 @@
 # positive-tool
 
-[正體中文](../README.md) | [English]()
+[正體中文](../README.md) | [English](README_en.md)
 
 **The README file should primarily be in Traditional Chinese.**
 

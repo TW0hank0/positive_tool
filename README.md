@@ -1,6 +1,6 @@
 # positive-tool
 
-[正體中文]() | [English](READMEs/README_en.md)
+[正體中文](README.md) | [English](READMEs/README_en.md)
 
 **README檔案請以正體中文版本為主**
 
