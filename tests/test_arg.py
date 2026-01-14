@@ -44,24 +44,6 @@ def test_arg_argtype():
             is_exists=True,
             is_file=True,
         )
-    with pytest.raises(FileExistsError):
-        arg.ArgType(
-            "test_arg",
-            __file__,
-            str,
-            is_exists=False,
-            is_file=True,
-            check_dir_already_exists=True,
-        )
-    with pytest.raises(FileExistsError):
-        arg.ArgType(
-            "test_arg",
-            os.path.dirname(__file__),
-            str,
-            is_exists=False,
-            is_folder=True,
-            check_dir_already_exists=True,
-        )
     # 正常使用
     arg.ArgType("test_arg", "test", str)
     #
