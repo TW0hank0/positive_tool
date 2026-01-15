@@ -12,7 +12,7 @@ wheels/
 # tool cache
 .ruff_cache/
 
-#test cache
+# test cache
 tmp_test_pt_*
 .pytest_cache/
 .coverage

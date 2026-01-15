@@ -1,7 +1,9 @@
 import os
-
+import inspect
 import typing
-from typing import Any, Iterable, Literal, Union
+
+from typing import Any, Iterable, Literal, Union, Callable
+from functools import wraps
 
 from .exceptions import exceptions
 
@@ -274,6 +276,33 @@ class ArgType:
         raise exceptions.arg.ArgTypeWrongTypeError(
             f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
         )
+
+    @classmethod
+    def auto(cls, func: Callable):
+        """arg.ArgType.auto"""
+        sig = inspect.signature(func)
+        type_hints = typing.get_type_hints(func)
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            # 綁定實際傳入的引數到參數名稱
+            bound_args = sig.bind(*args, **kwargs)
+            bound_args.apply_defaults()
+            # print(f"Calling {func.__name__}:")
+            for param_name, value in bound_args.arguments.items():
+                try:
+                    hint = type_hints[param_name]
+                except KeyError:
+                    raise exceptions.arg.ArgTypeNoTypehintError(
+                        f"{func.__name__}的{param_name}沒有type hint"
+                    )
+                print(
+                    f"  {param_name}: {value!r} (type hint: {hint})"
+                )
+                ArgType(param_name, value, [hint])
+            return func(*args, **kwargs)
+
+        return wrapper
 
 
 # TODO:ArgDefault：預設參數

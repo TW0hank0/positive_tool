@@ -19,3 +19,7 @@ class ArgTypeUnknownType(ArgTypeWrongTypeError):
 
 class FileTooLarge(ArgTypeError):
     """檔案過大"""
+
+
+class ArgTypeNoTypehintError(ArgTypeError):
+    """沒有type hint"""

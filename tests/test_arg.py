@@ -59,3 +59,15 @@ def test_arg_argtype_type_hints():
         expected_exception=exceptions.arg.ArgTypeWrongTypeError
     ):
         arg.ArgType("test_wrong_arg", 10, Literal["", 0.0])
+
+
+def test_arg_ArgType_auto():
+    @arg.ArgType.auto
+    def tmp_func(arg: int):
+        print(f"value:{arg}")
+
+    with pytest.raises(
+        expected_exception=exceptions.arg.ArgTypeWrongTypeError
+    ):
+        tmp_func("")
+    tmp_func(10)
