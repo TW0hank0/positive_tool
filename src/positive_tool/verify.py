@@ -3,7 +3,7 @@ import inspect
 import typing
 
 from typing import Any, Iterable, Literal, Union, Callable
-from functools import wraps
+import functools
 
 from .exceptions import exceptions
 
@@ -65,13 +65,9 @@ class ArgType:
                 "`is_file` 和 `is_folder` 不能同時使用"
             )
         if (
-            (is_exists is True)
-            or (is_file is True)
-            or (is_folder is True)
+            (is_exists is True) or (is_file is True) or (is_folder is True)
         ) and type(arg_value) not in [str, os.PathLike]:
-            raise exceptions.arg.ArgTypeInitError(
-                "`is_exists` 參數類型錯誤！"
-            )
+            raise exceptions.arg.ArgTypeInitError("`is_exists` 參數類型錯誤！")
         if (exists_file_size_limit_mb is not None) and (
             (is_exists is False) or (is_file is False)
         ):
@@ -82,18 +78,16 @@ class ArgType:
         self.arg_name: str = arg_name
         self.arg_value: Any = arg_value
         if type(arg_type) is list:
-            self.arg_type: list = arg_type
+            self.arg_type = arg_type
         elif isinstance(type(arg_type), Iterable) is True:
-            self.arg_type: list = list(arg_type)
+            self.arg_type = list(arg_type)
         else:
-            self.arg_type: list = [arg_type]
+            self.arg_type = [arg_type]
         self.is_exists: bool = is_exists
         self.is_file: bool = is_file
         self.is_folder: bool = is_folder
         self.check_dir_already_exists: bool = check_dir_already_exists
-        self.exists_file_size_limit_mb: None | int = (
-            exists_file_size_limit_mb
-        )
+        self.exists_file_size_limit_mb: None | int = exists_file_size_limit_mb
         #
         if do_check_value_type is True:
             self.check_value_type()
@@ -139,68 +133,12 @@ class ArgType:
                         break
             else:
                 self.raise_arg_wrong_type_error()
-        # elif (typing.get_origin(self.arg_value) is None):
-        #     # 不是type hint用
-        #     if type(self.arg_value) is type(ArgType):
-        #         for i in self.arg_type:
-        #             if type(i) is type(ArgType):
-        #                 if self.arg_value is i:
-        #                     break
-        #             elif type(i) is not type(ArgType):
-        #                 if self.arg_value is type(i):
-        #                     break
-        #     elif type(self.arg_value) is not type(ArgType):
-        #         # self.arg_value是value
-        #         for i in self.arg_type:
-        #             if type(i) is type(ArgType):
-        #                 # i是class時
-        #                 if type(self.arg_value) is i:
-        #                     break
-        #             elif type(i) is not type(ArgType):
-        #                 if type(self.arg_value) is type(i):
-        #                     break
-        #         else:
-        #             self.raise_arg_wrong_type_error()
-        # ##下方式type hint
-        # elif typing.get_origin(self.arg_value) is not None:
-        #     if typing.get_origin(self.arg_value) is Literal:
-        #         args = [typing.get_args(i) for i in self.arg_type]
-        #         for arg
-        #     else:
-        #         raise exceptions.ArgTypeUnknownType(f"未知參數類型（type hint參數）！")
-        # # origin = typing.get_origin(self.arg_value)
-        # args: tuple = typing.get_args(self.arg_value)
-        # break_loop = False
-        # for a in args:
-        #     if type(a) is type(ArgType):
-        #         for i in self.arg_type:
-        #             if type(i) is type(object):
-        #                 if i is a:
-        #                     break_loop = True
-        #                     break
-        #             elif type(i) is not type(object):
-        #                 if type(i) is a:
-        #                     break_loop = True
-        #                     break
-        #     elif type(a) is not type(ArgType):
-        #         for i in self.arg_type:
-        #             if type(i) is type(ArgType):
-        #                 if type(a) is i:
-        #                     break_loop = True
-        #                     break
-        #             elif type(i) is not type(ArgType):
-        #                 if (type(a) is type(i)) and (a == i):
-        #                     break_loop = True
-        #                     break
-        #     if break_loop is True:
-        #         break_loop = False
-        #         break
-        # else:
-        #     self.raise_arg_wrong_type_error()
-        # else:
-        #     raise exceptions.ArgTypeUnknownType(f"未知參數參數！")
-        if self.is_exists is True and self.arg_value is not None:
-            match os.path.exists(self.arg_value):  # type: ignore
+        if (
+            (self.is_exists is True)
+            and (self.arg_value is not None)
+            and (type(self.arg_value) is str)
+        ):
+            match os.path.exists(self.arg_value):
                 case False:
                     # if os.path.exists(self.arg_value) is False:
                     if self.is_file is True:
@@ -224,10 +162,7 @@ class ArgType:
                                     self.is_file is True
                                     and self.exists_file_size_limit_mb
                                     is not None
-                                    and (
-                                        self.exists_file_size_limit_mb
-                                        > 0
-                                    )
+                                    and (self.exists_file_size_limit_mb > 0)
                                 ):
                                     if (
                                         os.path.getsize(
@@ -252,58 +187,44 @@ class ArgType:
                                     )
                     else:
                         self.raise_arg_wrong_type_error()
-        # elif (
-        #     self.is_exists is False
-        #     and self.check_dir_already_exists is True
-        #     and self.arg_value is not None
-        #     and (
-        #         type(self.arg_value) is str
-        #         or type(self.arg_value) is os.PathLike
-        #     )
-        #     and os.path.exists(self.arg_value) is True  # type: ignore
-        # ):
-        #     if self.is_file is True:
-        #         raise FileExistsError(
-        #             f"檔案已存在： {self.arg_value}"
-        #         )
-        #     elif self.is_folder is True:
-        #         raise FileExistsError(
-        #             f"資料夾已存在： {self.arg_value}"
-        #         )
 
     def raise_arg_wrong_type_error(self) -> typing.NoReturn:
         # TODO:更改錯誤類型
+        # TODO:錯誤類型可自訂callback
         raise exceptions.arg.ArgTypeWrongTypeError(
             f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
         )
 
     @classmethod
-    def auto(cls, func: Callable):
-        """arg.ArgType.auto"""
-        sig = inspect.signature(func)
-        type_hints = typing.get_type_hints(func)
+    def auto(cls, func: Callable | None = None):
+        """從type hint建立ArgType
 
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            # 綁定實際傳入的引數到參數名稱
-            bound_args = sig.bind(*args, **kwargs)
-            bound_args.apply_defaults()
-            # print(f"Calling {func.__name__}:")
-            for param_name, value in bound_args.arguments.items():
-                try:
-                    hint = type_hints[param_name]
-                except KeyError:
-                    raise exceptions.arg.ArgTypeNoTypehintError(
-                        f"{func.__name__}的{param_name}沒有type hint"
-                    )
-                print(
-                    f"  {param_name}: {value!r} (type hint: {hint})"
-                )
-                ArgType(param_name, value, [hint])
-            return func(*args, **kwargs)
+        此功能使用到inspect
 
-        return wrapper
+        如需更好的性能請手動建立ArgType
 
+        `ArgType.auto`"""
+        if (isinstance(func, Callable) is False) or (func is None):
+            raise exceptions.arg.ArgTypeWrongTypeError(
+                "ArgType.auto應傳入Callable！"
+            )
+        else:
+            sig = inspect.signature(func)
+            type_hints = typing.get_type_hints(func)
 
-# TODO:ArgDefault：預設參數
-# TODO:Arg：ArgType、ArgDefault集合體
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                # 綁定實際傳入的引數到參數名稱
+                bound_args = sig.bind(*args, **kwargs)
+                bound_args.apply_defaults()
+                for param_name, value in bound_args.arguments.items():
+                    try:
+                        hint = type_hints[param_name]
+                    except KeyError:
+                        raise exceptions.arg.ArgTypeNoTypehintError(
+                            f"{func.__name__}的{param_name}沒有type hint"
+                        )
+                    ArgType(param_name, value, [hint])
+                return func(*args, **kwargs)
+
+            return wrapper

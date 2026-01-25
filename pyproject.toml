@@ -4,7 +4,7 @@ version = "0.6.0"
 description = "`positive_tool` 一個輔助開發的 Python 工具模組。目標提供實用的工具"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["rich>=14.2.0"]
+dependencies = ["rich==14.3.1"]
 
 [project.optional-dependencies]
 test = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]

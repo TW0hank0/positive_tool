@@ -1,8 +1,8 @@
-# positive-tool
+# positive_tool
 
 [正體中文](../README.md) | [English](README_en.md)
 
-**The README file should primarily be in Traditional Chinese.**
+**Please use the Chinese version as the main one**
 
 **README檔案請以正體中文版本為主**
 

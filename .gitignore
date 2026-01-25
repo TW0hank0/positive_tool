@@ -16,3 +16,6 @@ wheels/
 tmp_test_pt_*
 .pytest_cache/
 .coverage
+
+# krita cache
+*.kra~

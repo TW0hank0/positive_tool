@@ -1,6 +1,6 @@
 ![icon](icon.png)
 
-# positive-tool
+# positive_tool
 
 [正體中文](README.md) | [English](READMEs/README_en.md)
 

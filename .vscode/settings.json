@@ -4,6 +4,15 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "editor.defaultFormatter": "ms-python.vscode-pylance",
     "todo-tree.tree.scanMode": "workspace only",
+    "basedpyright.analysis.autoImportCompletions": false,
+    "basedpyright.analysis.typeCheckingMode": "standard",
+    "ruff.lineLength": 80,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "ruff.exclude": [
+        ".venv/"
+    ],
+    "basedpyright.analysis.exclude": [
+        ".venv/"
+    ]
 }

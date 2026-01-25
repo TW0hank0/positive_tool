@@ -7,7 +7,7 @@ from typing import Self, Literal, Union, Any, NoReturn
 from rich.logging import RichHandler
 
 from .exceptions import exceptions
-from .arg import ArgType
+from .verify import ArgType
 
 
 def find_project_path(
@@ -49,9 +49,7 @@ def find_project_path(
         if os.path.basename(project_path) == project_name:
             break
         else:
-            project_path = os.path.normpath(
-                os.path.join(project_path, "..")
-            )
+            project_path = os.path.normpath(os.path.join(project_path, ".."))
             if len(project_path_log) > 0:
                 if (
                     project_path
@@ -164,14 +162,15 @@ class UInt:
         # arg檢查
         # ArgType("other", other, [int, float, UInt])
         #
+        other_int: int
         if isinstance(other, (float)):
             other_int = int(other)
         elif isinstance(other, int):
-            other_int: int = other
+            other_int = other
         elif isinstance(other, UInt):
-            other_int: int = other.value
+            other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         #
         if other_int < 0 and abs(other_int) > self.value:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
@@ -181,12 +180,13 @@ class UInt:
 
     def __iadd__(self, other: int | float | Self):
         """符號：`+=`"""
+        other_int: int
         if isinstance(other, (float)):
             other_int = int(other)
         elif isinstance(other, int):
-            other_int: int = other
+            other_int = other
         elif isinstance(other, UInt):
-            other_int: int = other.value
+            other_int = other.value
         else:
             raise NotImplementedError
         #
@@ -207,14 +207,13 @@ class UInt:
 
     def __sub__(self, other: int | float | Self):
         """符號：`-`"""
-        # ArgType("other", other, [int, float, UInt])
-        #
+        other_int: int
         if isinstance(other, int):
-            other_int: int = other
+            other_int = other
         elif isinstance(other, float):
-            other_int: int = int(other)
+            other_int = int(other)
         elif isinstance(other, UInt):
-            other_int: int = other.value
+            other_int = other.value
         else:
             raise NotImplementedError
         #
@@ -229,9 +228,9 @@ class UInt:
         if isinstance(other, (float)):
             other_int = int(other)
         elif isinstance(other, int):
-            other_int: int = other
+            other_int = other
         elif isinstance(other, UInt):
-            other_int: int = other.value
+            other_int = other.value
         else:
             raise NotImplementedError
         #
@@ -256,11 +255,11 @@ class UInt:
         #
         # TODO:isinstance改成type
         if isinstance(other, int):
-            other_int: int = other
+            other_int = other
         elif isinstance(other, float):
-            other_int: int = int(other)
+            other_int = int(other)
         elif isinstance(other, UInt):
-            other_int: int = other.value
+            other_int = other.value
         else:
             raise NotImplementedError
         #
@@ -383,7 +382,7 @@ class UInt:
         return f"UInt({self.value})"
 
 
-def bytes_to_mb(size: int) -> float:
+def bytes_to_mb(size: int) -> float:  # TODO:待改良
     return size / 1000 / 1000
 
 
@@ -409,9 +408,7 @@ def get_project_info(
         data = tomllib.loads(file_str)
         name = data["project"]["name"]
         version = data["project"]["version"]
-        return ProjectInfo(
-            name, project_version=version, auto_get=False
-        )
+        return ProjectInfo(name, project_version=version, auto_get=False)
 
 
 class SemVer:  # TODO: 寫測試
@@ -481,9 +478,7 @@ class SemVer:  # TODO: 寫測試
         #
         if (
             self.major > other.major
-            or (
-                self.major >= other.major and self.minor > other.minor
-            )
+            or (self.major >= other.major and self.minor > other.minor)
             or (
                 self.major >= other.major
                 and self.minor >= other.minor
@@ -505,9 +500,7 @@ class SemVer:  # TODO: 寫測試
                 and self.minor <= other.minor
                 and self.major <= other.major
             )
-            or (
-                self.minor < other.minor and self.major <= other.major
-            )
+            or (self.minor < other.minor and self.major <= other.major)
             or (self.major < other.major)
         ):
             return True
@@ -580,9 +573,7 @@ class ProjectInfo:  # TODO: 寫測試
             self.project_path = project_path
         self.project_license_file_path = project_license_file_path
         if auto_get is True and need_auto_get is True:
-            data_from_file = get_project_info(
-                os.path.join(self.project_path)
-            )
+            data_from_file = get_project_info(os.path.join(self.project_path))
             if project_version is None:
                 self.project_version = data_from_file.project_version
 

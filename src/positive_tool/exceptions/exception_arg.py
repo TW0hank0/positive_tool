@@ -22,4 +22,6 @@ class FileTooLarge(ArgTypeError):
 
 
 class ArgTypeNoTypehintError(ArgTypeError):
-    """沒有type hint"""
+    """沒有type hint
+
+    用於`ArgType.auto`"""
