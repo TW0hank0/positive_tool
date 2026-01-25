@@ -1,6 +1,6 @@
 [project]
 name = "positive-tool"
-version = "0.7.2"
+version = "0.7.3"
 description = "`positive_tool` 一個輔助開發的 Python 工具模組。目標提供實用的工具"
 readme = "README.md"
 requires-python = ">=3.11"
