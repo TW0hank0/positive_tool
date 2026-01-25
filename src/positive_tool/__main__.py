@@ -1,5 +1,3 @@
-# TODO:完成__main__.py
-
 import os
 import sys
 
@@ -13,11 +11,14 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 
 def main():
     funcs = {
-        "pt.find_project_path": pt.find_project_path(
+        """pt.find_project_path(
+            "positive_tool",
+            os.path.dirname(os.path.abspath(__file__)),
+        )""": pt.find_project_path(
             "positive_tool",
             os.path.dirname(os.path.abspath(__file__)),
         ),
-        "pt.bytes_to_mb": pt.bytes_to_mb(1000 * 1000),
+        "pt.bytes_to_mb(1000 * 1000)": pt.bytes_to_mb(1000 * 1000),
     }
     for key in funcs:
         print(

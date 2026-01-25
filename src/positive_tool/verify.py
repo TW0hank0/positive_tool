@@ -154,7 +154,7 @@ class ArgType:
                 case True:
                     # TODO:整理程式碼
                     if type(self.arg_value) is str:
-                        match os.path.isfile(self.arg_value):  # type: ignore
+                        match os.path.isfile(self.arg_value):
                             case True:
                                 if self.is_folder is True:
                                     raise exceptions.pt.DirWrongType(
@@ -162,24 +162,24 @@ class ArgType:
                                     )
                                 elif (
                                     self.is_file is True
-                                    and self.exists_file_size_limit_mb
-                                    is not None
+                                    and (
+                                        self.exists_file_size_limit_mb
+                                        is not None
+                                    )
                                     and (self.exists_file_size_limit_mb > 0)
                                 ):
                                     if (
-                                        os.path.getsize(
-                                            self.arg_value  # type: ignore
-                                        )
-                                        > 0
+                                        os.path.getsize(self.arg_value) > 0.0
                                     ) and (
                                         (
-                                            os.path.getsize(
-                                                self.arg_value  # type: ignore
+                                            (
+                                                os.path.getsize(self.arg_value)
+                                                / 1000
+                                                / 1000
                                             )
-                                            / 1000
-                                            / 1000
+                                            - self.exists_file_size_limit_mb
                                         )
-                                        <= self.exists_file_size_limit_mb
+                                        > 0
                                     ):
                                         self.raise_arg_wrong_type_error()
                             case False:
@@ -191,8 +191,8 @@ class ArgType:
                         self.raise_arg_wrong_type_error()
 
     def raise_arg_wrong_type_error(self) -> typing.NoReturn:
-        # TODO:更改錯誤類型
-        # TODO:錯誤類型可自訂callback
+        # TODO:錯誤類型可自訂
+        # TODO:錯誤可自訂callback
         raise exceptions.verify.ArgTypeWrongTypeError(
             f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
         )

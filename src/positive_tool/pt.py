@@ -1,6 +1,7 @@
 import os
 import logging
 import tomllib
+import enum
 
 from typing import Self, Literal, Union, Any, NoReturn
 
@@ -125,7 +126,7 @@ type_hint_UInt_init_arg_arg_value = Union[int, float, "UInt"]
 
 
 class UInt:
-    """正數"""
+    """絕對正數"""
 
     __slot__: list[str] = ["value"]
 
@@ -162,12 +163,19 @@ class UInt:
         # arg檢查
         # ArgType("other", other, [int, float, UInt])
         #
-        other_int: int
-        if isinstance(other, (float)):
+        # if isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError("僅支援int、float及UInt！")
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, int):
+        elif type(other) is int:
             other_int = other
-        elif isinstance(other, UInt):
+        elif type(other) is UInt:
             other_int = other.value
         else:
             raise NotImplementedError("僅支援int、float及UInt！")
@@ -181,14 +189,22 @@ class UInt:
     def __iadd__(self, other: int | float | Self):
         """符號：`+=`"""
         other_int: int
-        if isinstance(other, (float)):
+        # if isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, int):
+        elif type(other) is int:
             other_int = other
-        elif isinstance(other, UInt):
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         #
         if other_int < 0 and abs(other_int) > self.value:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
@@ -197,25 +213,39 @@ class UInt:
             return self
 
     def __radd__(self, other: int | float | Self):
-        if isinstance(other, int):
+        # if isinstance(other, int):
+        #     result = other + self.value
+        # elif isinstance(other, float):
+        #     result = other + float(self.value)
+        # else:
+        #     raise NotImplementedError
+        if type(other) is int:
             result = other + self.value
-        elif isinstance(other, float):
+        elif type(other) is float:
             result = other + float(self.value)
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int及float！")
         return result
 
     def __sub__(self, other: int | float | Self):
         """符號：`-`"""
         other_int: int
-        if isinstance(other, int):
-            other_int = other
-        elif isinstance(other, float):
+        # if isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, UInt):
+        elif type(other) is int:
+            other_int = other
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         #
         if other_int > 0 and abs(other_int) > self.value:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
@@ -225,14 +255,22 @@ class UInt:
 
     def __isub__(self, other: int | float | Self):
         """符號：`-=`"""
-        if isinstance(other, (float)):
+        # if isinstance(other, (float)):
+        #     other_int = int(other)
+        # elif isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, int):
+        elif type(other) is int:
             other_int = other
-        elif isinstance(other, UInt):
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         #
         if other_int > 0 and abs(other_int) > self.value:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
@@ -240,28 +278,41 @@ class UInt:
             self.value -= other_int
             return self
 
-    def __rsub__(self, other: int | float | Self):
-        if isinstance(other, int):
+    def __rsub__(self, other: int | float):
+        # if isinstance(other, int):
+        #     result = other - self.value
+        # elif isinstance(other, float):
+        #     result = other - float(self.value)
+        # else:
+        #     raise NotImplementedError
+        if type(other) is int:
             result = other - self.value
-        elif isinstance(other, float):
+        elif type(other) is float:
             result = other - float(self.value)
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         return result
 
     def __mul__(self, other: int | float | Self):
         """符號：`*`"""
         # ArgType("other", other, [int, float, UInt])
         #
-        # TODO:isinstance改成type
-        if isinstance(other, int):
-            other_int = other
-        elif isinstance(other, float):
+        # if isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, UInt):
+        elif type(other) is int:
+            other_int = other
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         #
         if other_int < 0 and other_int != 0:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
@@ -273,14 +324,22 @@ class UInt:
         """符號：`*=`"""
         # ArgType("other", other, [int, float, UInt])
         #
-        if isinstance(other, int):
-            other_int = other
-        elif isinstance(other, float):
+        # if isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, UInt):
+        elif type(other) is int:
+            other_int = other
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         #
         if other_int < 0:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
@@ -288,85 +347,139 @@ class UInt:
             self.value *= other_int
             return self
 
-    def __rmul__(self, other: int | float | Self):
-        if isinstance(other, int):
-            result = other * self.value
-        elif isinstance(other, float):
+    def __rmul__(self, other: int | float):
+        # if isinstance(other, int):
+        #     result = other * self.value
+        # elif isinstance(other, float):
+        #     result = other * float(self.value)
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             result = other * float(self.value)
+        elif type(other) is int:
+            result = other * self.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int及float！")
         return result
 
     def __eq__(self, other: object) -> bool:
         """符號：`==`"""
-        if isinstance(other, int):
-            other_int = other
-        elif isinstance(other, float):
+        # if isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, UInt):
+        elif type(other) is int:
+            other_int = other
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         return self.value == other_int
 
     def __ne__(self, other: object):
         """符號：`!=`"""
-        if isinstance(other, int):
-            other_int = other
-        elif isinstance(other, float):
+        # if isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, UInt):
+        elif type(other) is int:
+            other_int = other
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         return self.value != other_int
 
     def __gt__(self, other: int | float | Self):
         """符號：`>`"""
-        if isinstance(other, int):
-            other_int = other
-        elif isinstance(other, float):
+        # if isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, UInt):
+        elif type(other) is int:
+            other_int = other
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         return self.value > other_int
 
     def __ge__(self, other: int | float | Self):
         """符號：`>=`"""
-        if isinstance(other, int):
-            other_int = other
-        elif isinstance(other, float):
+        # if isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, UInt):
+        elif type(other) is int:
+            other_int = other
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         return self.value >= other_int
 
     def __lt__(self, other: int | float | Self):
         """符號：`<`"""
-        if isinstance(other, int):
-            other_int = other
-        elif isinstance(other, float):
+        # if isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, UInt):
+        elif type(other) is int:
+            other_int = other
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         return self.value < other_int
 
     def __le__(self, other):
         """符號：`<=`"""
-        if isinstance(other, int):
-            other_int = other
-        elif isinstance(other, float):
+        # if isinstance(other, int):
+        #     other_int = other
+        # elif isinstance(other, float):
+        #     other_int = int(other)
+        # elif isinstance(other, UInt):
+        #     other_int = other.value
+        # else:
+        #     raise NotImplementedError
+        if type(other) is float:
             other_int = int(other)
-        elif isinstance(other, UInt):
+        elif type(other) is int:
+            other_int = other
+        elif type(other) is UInt:
             other_int = other.value
         else:
-            raise NotImplementedError
+            raise NotImplementedError("僅支援int、float及UInt！")
         return self.value <= other_int
 
     def __int__(self) -> int:
@@ -380,10 +493,6 @@ class UInt:
 
     def __repr__(self) -> str:
         return f"UInt({self.value})"
-
-
-def bytes_to_mb(size: int) -> float:  # TODO:待改良
-    return size / 1000 / 1000
 
 
 def get_project_info(
@@ -524,7 +633,7 @@ class SemVer:  # TODO: 寫測試
         return f"SemVer({self.major}, {self.minor}, {self.patch})"
 
 
-class ProjectInfo:  # TODO: 寫測試
+class ProjectInfo:  # TODO：寫測試
     """專案資訊
 
     `positive_tool`
@@ -597,3 +706,55 @@ ProjectInfo(
 )
 """
         return text
+
+
+def bytes_to_mb(size_bytes: int) -> float:
+    # return size / 1000 / 1000
+    return FileSize(size_bytes, FileSizeTypes.BYTES).to_mb()
+
+
+class FileSizeTypes(enum.Enum):
+    """檔案大小的單位
+
+    (目前的單位都是10進位)"""
+
+    BYTES = enum.auto()
+    KB = enum.auto()
+    MB = enum.auto()
+
+
+class FileSize:  # TODO：寫測試
+    """檔案大小"""
+
+    __slots__ = ["file_size_bytes"]
+
+    # TODO:待完成
+    def __init__(
+        self,
+        file_size: int,
+        size_type: FileSizeTypes = FileSizeTypes.MB,
+    ) -> None:
+        #
+        ArgType("file_size", file_size, [int])
+        ArgType("size_type", size_type, [FileSizeTypes, int])
+        #
+        match size_type:
+            case FileSizeTypes.BYTES:
+                self.file_size_bytes = file_size
+            case FileSizeTypes.KB:
+                self.file_size_bytes = file_size * 1000
+            case FileSizeTypes.MB:
+                self.file_size_bytes = file_size * 1000 * 1000
+
+    def to_mb(self) -> float:
+        return self.file_size_bytes / 1000 / 1000
+
+    @classmethod
+    def bytes_to_mb(cls, size_bytes: int) -> float:
+        return cls(size_bytes, FileSizeTypes.BYTES).to_mb()
+
+    def __repr__(self) -> str:
+        return f"FileSize({self.file_size_bytes}, FileSizeTypes.BYTES)"
+
+    def __str__(self) -> str:  # TODO:待優化：自動單位
+        return f"{self.file_size_bytes}BYTES"
