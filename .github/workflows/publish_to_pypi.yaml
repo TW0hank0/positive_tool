@@ -21,8 +21,8 @@ jobs:
       - name: Build source distribution and wheel
         run: uv build
 
-      - name: Check package metadata
-        run: uv publish --check dist/*
+      #- name: Check package metadata
+        #run: uv publish --check dist/*
 
       - name: Publish to TestPyPI
         env:

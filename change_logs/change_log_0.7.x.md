@@ -9,4 +9,4 @@
 - README增加icon
 
 ### 新增
-- 專案以上傳到pypi
+- 專案已上傳到pypi
