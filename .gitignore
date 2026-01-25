@@ -11,6 +11,7 @@ wheels/
 
 # tool cache
 .ruff_cache/
+uv.lock
 
 # test cache
 tmp_test_pt_*

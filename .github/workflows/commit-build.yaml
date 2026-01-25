@@ -41,7 +41,7 @@ jobs:
       - name: Get package version
         id: get_version
         run: |
-          version=$(python -c "import tomllib; import sys;d=tomllib.load(open('pyproject.toml','rb'));v = d.get('project', {}).get('version') or d.get('tool', {}).get('poetry',{}).get('version'); print(v)")
+          version=$(python ci/get_version.py)
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Find built wheel

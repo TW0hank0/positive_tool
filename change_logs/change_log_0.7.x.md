@@ -7,3 +7,6 @@
 ### 更改
 - `arg`改名`verify`
 - README增加icon
+
+### 新增
+- 專案以上傳到pypi

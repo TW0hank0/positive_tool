@@ -5,9 +5,19 @@ description = "`positive_tool` 一個輔助開發的 Python 工具模組。目�
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["rich==14.3.1"]
+license = { file = "LICENSE" }
+
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 test = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]
+build = ["twine"]
+
+[project.urls]
+Homepage = "https://github.com/TW0hank0/positive_tool"
+Repository = "https://github.com/TW0hank0/positive_tool"
 
 [tool.pytest.ini_options]
 addopts = "-v --cov=positive_tool --cov-report=term-missing"
