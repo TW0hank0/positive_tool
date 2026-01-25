@@ -14,5 +14,14 @@
     ],
     "basedpyright.analysis.exclude": [
         ".venv/"
-    ]
+    ],
+    "files.readonlyInclude": {
+        "**/.venv": true
+    },
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/.ruff_cache": true,
+        "**/*.egg-info": true
+    }
 }
