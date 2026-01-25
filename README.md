@@ -1,4 +1,4 @@
-![icon](icon.png)
+![icon](https://github.com/TW0hank0/positive_tool/blob/master/icon.png)
 
 # positive_tool
 

@@ -11,14 +11,6 @@
 ### 新增
 - 專案已上傳到pypi
 - 
-# positive_tool v0.7.1
-
-修復github ci
-
-# positive_tool v0.7.2
-
-修復github ci
-
-# positive_tool v0.7.3
+# positive_tool v0.7.1~0.7.4
 
 修復github ci
