@@ -10,3 +10,7 @@
 
 ### 新增
 - 專案已上傳到pypi
+- 
+# positive_tool v0.7.1
+
+修復github ci
