@@ -399,7 +399,7 @@ def get_project_info(
     )
     #
     if bytes_to_mb(os.path.getsize(pyproject_file_path)) > 10:
-        raise exceptions.arg.FileTooLarge(
+        raise exceptions.verify.FileTooLarge(
             f"檔案過大，檔案：「{pyproject_file_path}」"
         )
     else:

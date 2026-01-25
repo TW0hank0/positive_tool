@@ -5,9 +5,7 @@ import pytest
 # 把 package root 加入 sys.path
 sys.path.insert(
     0,
-    os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "src")
-    ),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")),
 )
 
 from positive_tool.exceptions import exceptions
@@ -15,7 +13,7 @@ from positive_tool import pt
 
 
 def test_find_project_path():
-    with pytest.raises(exceptions.arg.ArgTypeWrongTypeError):
+    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
         pt.find_project_path(
             "positive_tool",
             dir_deep_max="",  # type: ignore
@@ -33,9 +31,7 @@ def test_find_project_path():
             "positive_tool", "C:\\" if os.name == "nt" else "/"
         )
     with pytest.raises(exceptions.pt.DirWrongType):
-        pt.find_project_path(
-            "positive_tool", os.path.abspath(__file__)
-        )
+        pt.find_project_path("positive_tool", os.path.abspath(__file__))
     assert (
         os.path.basename(pt.find_project_path("positive_tool"))
         == "positive_tool"
@@ -46,24 +42,24 @@ def test_build_logger():
     test_file_path = os.path.join(
         os.path.dirname(__file__), "tmp_test_pt_find_project_path"
     )
-    with pytest.raises(exceptions.arg.ArgTypeWrongTypeError):
+    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
         pt.build_logger(0)  # type: ignore
-    with pytest.raises(exceptions.arg.ArgTypeWrongTypeError):
+    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
         pt.build_logger(
             os.path.join(os.path.dirname(__file__), test_file_path),
             0,  # type: ignore
         )
-    with pytest.raises(exceptions.arg.ArgTypeWrongTypeError):
+    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
         pt.build_logger(
             os.path.join(os.path.dirname(__file__), test_file_path),
             log_level_file="",  # type: ignore
         )
-    with pytest.raises(exceptions.arg.ArgTypeWrongTypeError):
+    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
         pt.build_logger(
             os.path.join(os.path.dirname(__file__), test_file_path),
             log_level_console="",  # type: ignore
         )
-    with pytest.raises(exceptions.arg.ArgTypeWrongTypeError):
+    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
         pt.build_logger(
             os.path.join(os.path.dirname(__file__), test_file_path),
             with_rich_traceback="",  # type: ignore
@@ -184,7 +180,7 @@ def test_UInt():
     assert str(pt.UInt(10)) == "10"
     assert repr(pt.UInt(10)) == "UInt(10)"
     with pytest.raises(
-        expected_exception=exceptions.arg.ArgTypeWrongTypeError
+        expected_exception=exceptions.verify.ArgTypeWrongTypeError
     ):
         pt.UInt("")  # type: ignore
     pt.UInt(pt.UInt(10))

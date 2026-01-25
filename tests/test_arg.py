@@ -16,7 +16,7 @@ from positive_tool import verify
 
 
 def test_arg_argtype():
-    with pytest.raises(exceptions.arg.ArgTypeWrongTypeError):
+    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
         verify.ArgType(
             "test_arg",
             "test_value",
@@ -24,7 +24,7 @@ def test_arg_argtype():
             is_file=True,
             is_folder=True,
         )
-    with pytest.raises(exceptions.arg.ArgTypeInitError):
+    with pytest.raises(exceptions.verify.ArgTypeInitError):
         verify.ArgType("test_arg", 0, int, is_exists=True)
     with pytest.raises(FileNotFoundError):
         verify.ArgType(
@@ -53,7 +53,9 @@ def test_arg_argtype():
 
 def test_arg_argtype_type_hints():
     verify.ArgType("test_arg", 10, Literal[10])
-    with pytest.raises(expected_exception=exceptions.arg.ArgTypeWrongTypeError):
+    with pytest.raises(
+        expected_exception=exceptions.verify.ArgTypeWrongTypeError
+    ):
         verify.ArgType("test_wrong_arg", 10, Literal["", 0.0])
 
 
@@ -62,6 +64,8 @@ def test_arg_ArgType_auto():
     def tmp_func(arg: int):
         print(f"value:{arg}")
 
-    with pytest.raises(expected_exception=exceptions.arg.ArgTypeWrongTypeError):
+    with pytest.raises(
+        expected_exception=exceptions.verify.ArgTypeWrongTypeError
+    ):
         tmp_func("")
     tmp_func(10)

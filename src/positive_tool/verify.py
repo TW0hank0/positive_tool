@@ -61,17 +61,19 @@ class ArgType:
         # TODO: 整理程式碼
         # 檢查參數
         if is_file is True and is_folder is True:
-            raise exceptions.arg.ArgTypeWrongTypeError(
+            raise exceptions.verify.ArgTypeWrongTypeError(
                 "`is_file` 和 `is_folder` 不能同時使用"
             )
         if (
             (is_exists is True) or (is_file is True) or (is_folder is True)
         ) and type(arg_value) not in [str, os.PathLike]:
-            raise exceptions.arg.ArgTypeInitError("`is_exists` 參數類型錯誤！")
+            raise exceptions.verify.ArgTypeInitError(
+                "`is_exists` 參數類型錯誤！"
+            )
         if (exists_file_size_limit_mb is not None) and (
             (is_exists is False) or (is_file is False)
         ):
-            raise exceptions.arg.ArgTypeInitError(
+            raise exceptions.verify.ArgTypeInitError(
                 "`exists_file_size_limit_mb`只能在檔案存在時使用！"
             )
         #
@@ -191,7 +193,7 @@ class ArgType:
     def raise_arg_wrong_type_error(self) -> typing.NoReturn:
         # TODO:更改錯誤類型
         # TODO:錯誤類型可自訂callback
-        raise exceptions.arg.ArgTypeWrongTypeError(
+        raise exceptions.verify.ArgTypeWrongTypeError(
             f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
         )
 
@@ -205,7 +207,7 @@ class ArgType:
 
         `ArgType.auto`"""
         if (isinstance(func, Callable) is False) or (func is None):
-            raise exceptions.arg.ArgTypeWrongTypeError(
+            raise exceptions.verify.ArgTypeWrongTypeError(
                 "ArgType.auto應傳入Callable！"
             )
         else:
@@ -221,7 +223,7 @@ class ArgType:
                     try:
                         hint = type_hints[param_name]
                     except KeyError:
-                        raise exceptions.arg.ArgTypeNoTypehintError(
+                        raise exceptions.verify.ArgTypeNoTypehintError(
                             f"{func.__name__}的{param_name}沒有type hint"
                         )
                     ArgType(param_name, value, [hint])
