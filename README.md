@@ -1,8 +1,8 @@
+![icon](icon.png)
+
 # positive-tool
 
 [正體中文](README.md) | [English](READMEs/README_en.md)
-
-**README檔案請以正體中文版本為主**
 
 `positive_tool` 是一個輔助開發的 Python 工具函式庫。目標提供小而實用的工具。
 
