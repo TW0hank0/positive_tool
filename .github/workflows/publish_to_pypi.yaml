@@ -21,13 +21,14 @@ jobs:
       - name: Build source distribution and wheel
         run: uv build
 
-      #- name: Check package metadata
-        #run: uv publish --check dist/*
+      - name: Check package metadata
+        run: uv publish --dry-run dist/*
 
       - name: Publish to TestPyPI
         env:
           UV_PUBLISH_USERNAME: __token__
           UV_PUBLISH_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          UV_PUBLISH_INDEX_URL: https://test.pypi.org/legacy/
         run: uv publish --repository testpypi
 
       - name: Publish to PyPI
