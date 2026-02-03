@@ -154,34 +154,63 @@ class ArgType:
                 case True:
                     # TODO:整理程式碼
                     if type(self.arg_value) is str:
-                        match os.path.isfile(self.arg_value):
-                            case True:
-                                if self.is_folder is True:
-                                    raise exceptions.pt.DirWrongType(
-                                        f"應為資料夾卻是檔案： {self.arg_value}"
+                        if self.is_file is True:
+                            if os.path.isfile(self.arg_value) is False:
+                                raise exceptions.pt.DirWrongType(
+                                    f"應為資料夾卻是檔案： {self.arg_value}"
+                                )
+                            if (
+                                (self.is_file is True)
+                                and (self.exists_file_size_limit_mb is not None)
+                                and (self.exists_file_size_limit_mb > 0)
+                                and (os.path.getsize(self.arg_value) > 0)
+                                and (
+                                    os.path.getsize(self.arg_value)
+                                    >= (
+                                        self.exists_file_size_limit_mb
+                                        * 1000
+                                        * 1000
                                     )
-                                elif (
-                                    self.is_file is True
-                                    and self.exists_file_size_limit_mb
-                                    is not None
-                                    and (self.exists_file_size_limit_mb > 0)
-                                ):
-                                    if (
-                                        os.path.getsize(self.arg_value) > 0
-                                    ) and (
-                                        (
-                                            os.path.getsize(self.arg_value)
-                                            / 1000
-                                            / 1000
-                                        )
-                                        <= self.exists_file_size_limit_mb
-                                    ):
-                                        self.raise_arg_wrong_type_error()
-                            case False:
-                                if self.is_file is True:
-                                    raise exceptions.pt.DirWrongType(
-                                        f"應為檔案卻是資料夾： {self.arg_value}"
-                                    )
+                                )
+                            ):
+                                raise exceptions.verify.ArgTypeFileTooLarge(
+                                    "檔案超出大小限制！"
+                                )
+                        if self.is_folder is True:
+                            if os.path.isdir(self.arg_value) is False:
+                                raise exceptions.pt.DirWrongType(
+                                    f"應為檔案卻是資料夾： {self.arg_value}"
+                                )
+                        # match os.path.isfile(self.arg_value):
+                        #     case True:
+                        #         if self.is_folder is True:
+                        #             raise exceptions.pt.DirWrongType(
+                        #                 f"應為資料夾卻是檔案： {self.arg_value}"
+                        #             )
+                        #         elif (
+                        #             self.is_file is True
+                        #             and self.exists_file_size_limit_mb
+                        #             is not None
+                        #             and (self.exists_file_size_limit_mb > 0)
+                        #         ):
+                        #             if (
+                        #                 os.path.getsize(self.arg_value) > 0
+                        #             ) and (
+                        #                 (
+                        #                     os.path.getsize(self.arg_value)
+                        #                     / 1000
+                        #                     / 1000
+                        #                 )
+                        #                 >= self.exists_file_size_limit_mb
+                        #             ):
+                        #                 raise exceptions.verify.ArgTypeFileTooLarge(
+                        #                     "檔案超出限制！"
+                        #                 )
+                        #     case False:
+                        #         if self.is_file is True:
+                        #             raise exceptions.pt.DirWrongType(
+                        #                 f"應為檔案卻是資料夾： {self.arg_value}"
+                        #             )
                     else:
                         self.raise_arg_wrong_type_error()
 

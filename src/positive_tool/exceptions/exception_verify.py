@@ -17,7 +17,7 @@ class ArgTypeUnknownType(ArgTypeWrongTypeError):
     """無法確認的類型"""
 
 
-class FileTooLarge(ArgTypeError):
+class ArgTypeFileTooLarge(ArgTypeError):
     """檔案過大"""
 
 
