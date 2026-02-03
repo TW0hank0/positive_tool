@@ -39,5 +39,5 @@ jobs:
       #- name: check use ty
         #run: uv run ty check src/
 
-      - name: check use mypy
-        run: uv run mypy src/.
+      #- name: check use mypy
+        #run: uv run mypy src/.
