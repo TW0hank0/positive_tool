@@ -39,3 +39,17 @@ workflow已測試版本：3.11~3.15
 - pypy
 
 workflow已測試版本：3.11
+
+### 安裝
+
+使用pip
+
+```
+pip install positive-tool
+```
+
+使用uv
+
+```
+uv add positive-tool
+```

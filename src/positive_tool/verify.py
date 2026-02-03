@@ -142,7 +142,6 @@ class ArgType:
         ):
             match os.path.exists(self.arg_value):
                 case False:
-                    # if os.path.exists(self.arg_value) is False:
                     if self.is_file is True:
                         raise FileNotFoundError(
                             f"找不到檔案： {self.arg_value}"
