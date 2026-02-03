@@ -1,4 +1,4 @@
-name: build-and-upload-release
+name: release-build
 
 permissions:
   contents: write
