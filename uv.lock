@@ -591,15 +591,17 @@ name = "positive-tool"
 version = "0.7.4"
 source = { editable = "." }
 dependencies = [
-    { name = "mypy" },
     { name = "rich" },
-    { name = "ruff" },
-    { name = "ty" },
 ]
 
 [package.optional-dependencies]
 build = [
     { name = "twine" },
+]
+check = [
+    { name = "mypy" },
+    { name = "ruff" },
+    { name = "ty" },
 ]
 test = [
     { name = "pytest" },
@@ -608,15 +610,15 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "mypy", specifier = ">=1.19.1" },
+    { name = "mypy", marker = "extra == 'check'", specifier = ">=1.19.1" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=9.0.2" },
     { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=4.0.0" },
     { name = "rich", specifier = "==14.3.1" },
-    { name = "ruff", specifier = ">=0.14.14" },
+    { name = "ruff", marker = "extra == 'check'", specifier = ">=0.14.14" },
     { name = "twine", marker = "extra == 'build'" },
-    { name = "ty", specifier = ">=0.0.14" },
+    { name = "ty", marker = "extra == 'check'", specifier = ">=0.0.14" },
 ]
-provides-extras = ["test", "build"]
+provides-extras = ["test", "build", "check"]
 
 [[package]]
 name = "pycparser"

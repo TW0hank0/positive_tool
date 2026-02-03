@@ -450,20 +450,20 @@ class SemVer:  # TODO: 寫測試
 
     @classmethod
     def parse(
-        cls, item: Union[tuple[int, int, int], list[int], Self, str]
-    ) -> Self | NoReturn:  # type: ignore
+        cls, item: Union[tuple[int, int, int], Self, str]
+    ) -> Self | NoReturn:
         #
         arg_item = ArgType("item", item, [tuple, list, SemVer, str])
         #
-        if type(item) in [SemVer]:
-            return cls(item.major, item.minor, item.patch)  # type: ignore
-        elif type(item) in [tuple, list]:
-            if len(item) > 3 or len(item) < 2:  # type: ignore
+        if type(item) is SemVer:
+            return cls(item.major, item.minor, item.patch)
+        elif type(item) is tuple:
+            if len(item) > 3 or len(item) < 2:
                 arg_item.raise_arg_wrong_type_error()
             else:
-                return cls(*item)  # type: ignore
-        elif type(item) in [str]:
-            ver: list[str] = item.split(".", 3)  # type: ignore
+                return cls(*item)
+        elif type(item) is str:
+            ver: list[str] = item.split(".", 3)
             if len(ver) > 3 or len(ver) < 2:
                 arg_item.raise_arg_wrong_type_error()
             else:

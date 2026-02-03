@@ -154,7 +154,7 @@ class ArgType:
                 case True:
                     # TODO:整理程式碼
                     if type(self.arg_value) is str:
-                        match os.path.isfile(self.arg_value):  # type: ignore
+                        match os.path.isfile(self.arg_value):
                             case True:
                                 if self.is_folder is True:
                                     raise exceptions.pt.DirWrongType(
@@ -167,15 +167,10 @@ class ArgType:
                                     and (self.exists_file_size_limit_mb > 0)
                                 ):
                                     if (
-                                        os.path.getsize(
-                                            self.arg_value  # type: ignore
-                                        )
-                                        > 0
+                                        os.path.getsize(self.arg_value) > 0
                                     ) and (
                                         (
-                                            os.path.getsize(
-                                                self.arg_value  # type: ignore
-                                            )
+                                            os.path.getsize(self.arg_value)
                                             / 1000
                                             / 1000
                                         )
