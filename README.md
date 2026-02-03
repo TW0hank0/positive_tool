@@ -2,7 +2,7 @@
 
 # positive_tool
 
-[正體中文](README.md) | [English](READMEs/README_en.md)
+[正體中文](README.md) | [English](https://github.com/TW0hank0/positive_tool/blob/master/READMEs/README_en.md)
 
 `positive_tool` 是一個輔助開發的 Python 工具函式庫。目標提供小而實用的工具。
 

@@ -2,9 +2,11 @@ name: test
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    path-ignores:
+      - 'README.md'
+      - 'READMEs/**'
+      - '.vscode/**'
+      - 'change_logs/**'
 
 jobs:
   test:
