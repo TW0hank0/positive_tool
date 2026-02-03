@@ -11,7 +11,3 @@ class DirNotFoundError(PositiveToolError):
 
 class DirWrongType(PositiveToolError):
     """用在應為資料夾卻是檔案 或是 應為檔案卻是資料夾 的錯誤"""
-
-
-class UIntValueError(PositiveToolError):
-    """UInt錯誤，通常因為非正數（負數）"""

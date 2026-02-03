@@ -1,9 +1,9 @@
 import os
 import inspect
 import typing
-
-from typing import Any, Iterable, Literal, Union, Callable
 import functools
+
+from typing import Any, Iterable, Literal, Union, Callable, Self, NoReturn
 
 from .exceptions import exceptions
 
@@ -258,3 +258,260 @@ class ArgType:
                 return func(*args, **kwargs)
 
             return wrapper
+
+
+class UInt:
+    """正數"""
+
+    __slot__: list[str] = ["value"]
+
+    def __init__(
+        self,
+        value: Union[int, float, "UInt"],
+    ) -> None:
+        #
+        arg_value = ArgType(
+            "value",
+            value,
+            [Union[int, float, "UInt"], UInt],
+        )
+        #
+        if type(value) is int:
+            value_int = value
+        elif type(value) in [float, UInt]:
+            value_int = int(value)
+        else:
+            arg_value.raise_arg_wrong_type_error()
+        #
+        if value_int < 0:
+            # raise exceptions.pt.UIntValueError("UInt不能小於零！")
+            self._raise_uint_error()
+        else:
+            self.value = value_int
+
+    def _raise_uint_error(self) -> NoReturn:
+        raise exceptions.verify.UIntValueError("UInt不能小於零！")
+
+    def __add__(self, other: int | float | Self):
+        """符號：`+`"""
+        other_int: int
+        if isinstance(other, (float)):
+            other_int = int(other)
+        elif isinstance(other, int):
+            other_int = other
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError("僅支援int、float及UInt！")
+        #
+        if other_int < 0 and abs(other_int) > self.value:
+            # raise exceptions.pt.UIntValueError("UInt不能小於零！")
+            self._raise_uint_error()
+        else:
+            result = UInt(self.value + other_int)
+            return result
+
+    def __iadd__(self, other: int | float | Self):
+        """符號：`+=`"""
+        other_int: int
+        if isinstance(other, (float)):
+            other_int = int(other)
+        elif isinstance(other, int):
+            other_int = other
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        #
+        if other_int < 0 and abs(other_int) > self.value:
+            # raise exceptions.pt.UIntValueError("UInt不能小於零！")
+            self._raise_uint_error()
+        else:
+            self.value += other_int
+            return self
+
+    def __radd__(self, other: int | float | Self):
+        if isinstance(other, int):
+            result = other + self.value
+        elif isinstance(other, float):
+            result = other + float(self.value)
+        else:
+            raise NotImplementedError
+        return result
+
+    def __sub__(self, other: int | float | Self):
+        """符號：`-`"""
+        other_int: int
+        if isinstance(other, int):
+            other_int = other
+        elif isinstance(other, float):
+            other_int = int(other)
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        #
+        if other_int > 0 and abs(other_int) > self.value:
+            # raise exceptions.pt.UIntValueError("UInt不能小於零！")
+            self._raise_uint_error()
+        else:
+            result = UInt(self.value - other_int)
+            return result
+
+    def __isub__(self, other: int | float | Self):
+        """符號：`-=`"""
+        if isinstance(other, (float)):
+            other_int = int(other)
+        elif isinstance(other, int):
+            other_int = other
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        #
+        if other_int > 0 and abs(other_int) > self.value:
+            # raise exceptions.pt.UIntValueError("UInt不能小於零！")
+            self._raise_uint_error()
+        else:
+            self.value -= other_int
+            return self
+
+    def __rsub__(self, other: int | float | Self):
+        if isinstance(other, int):
+            result = other - self.value
+        elif isinstance(other, float):
+            result = other - float(self.value)
+        else:
+            raise NotImplementedError
+        return result
+
+    def __mul__(self, other: int | float | Self):
+        """符號：`*`"""
+        if isinstance(other, int):
+            other_int = other
+        elif isinstance(other, float):
+            other_int = int(other)
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        #
+        if other_int < 0 and other_int != 0:
+            # raise exceptions.pt.UIntValueError("UInt不能小於零！")
+            self._raise_uint_error()
+        else:
+            result = UInt(self.value * other_int)
+            return result
+
+    def __imul__(self, other: int | float | Self):
+        """符號：`*=`"""
+        # ArgType("other", other, [int, float, UInt])
+        #
+        if isinstance(other, int):
+            other_int = other
+        elif isinstance(other, float):
+            other_int = int(other)
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        #
+        if other_int < 0:
+            # raise exceptions.pt.UIntValueError("UInt不能小於零！")
+            self._raise_uint_error()
+        else:
+            self.value *= other_int
+            return self
+
+    def __rmul__(self, other: int | float | Self):
+        if isinstance(other, int):
+            result = other * self.value
+        elif isinstance(other, float):
+            result = other * float(self.value)
+        else:
+            raise NotImplementedError
+        return result
+
+    def __eq__(self, other: object) -> bool:
+        """符號：`==`"""
+        if isinstance(other, int):
+            other_int = other
+        elif isinstance(other, float):
+            other_int = int(other)
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        return self.value == other_int
+
+    def __ne__(self, other: object):
+        """符號：`!=`"""
+        if isinstance(other, int):
+            other_int = other
+        elif isinstance(other, float):
+            other_int = int(other)
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        return self.value != other_int
+
+    def __gt__(self, other: int | float | Self):
+        """符號：`>`"""
+        if isinstance(other, int):
+            other_int = other
+        elif isinstance(other, float):
+            other_int = int(other)
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        return self.value > other_int
+
+    def __ge__(self, other: int | float | Self):
+        """符號：`>=`"""
+        if isinstance(other, int):
+            other_int = other
+        elif isinstance(other, float):
+            other_int = int(other)
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        return self.value >= other_int
+
+    def __lt__(self, other: int | float | Self):
+        """符號：`<`"""
+        if isinstance(other, int):
+            other_int = other
+        elif isinstance(other, float):
+            other_int = int(other)
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        return self.value < other_int
+
+    def __le__(self, other):
+        """符號：`<=`"""
+        if isinstance(other, int):
+            other_int = other
+        elif isinstance(other, float):
+            other_int = int(other)
+        elif isinstance(other, UInt):
+            other_int = other.value
+        else:
+            raise NotImplementedError
+        return self.value <= other_int
+
+    def __int__(self) -> int:
+        return self.value
+
+    def __float__(self) -> float:
+        return float(self.value)
+
+    def __str__(self) -> str:
+        return str(self.value)
+
+    def __repr__(self) -> str:
+        return f"UInt({self.value})"
