@@ -89,12 +89,13 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ steps.get_version.outputs.version }}-pre-${{ steps.get_sha.outputs.short_sha }}-${{ matrix.python }}__${{ steps.get_datetime.outputs.datetime }}
-          name: pre-release+${{ steps.get_version.outputs.version }}+${{ steps.get_sha.outputs.short_sha }}+${{ matrix.python }}+${{ steps.get_datetime.outputs.datetime }}
+          tag: prev-${{ steps.get_version.outputs.version }}+${{ steps.get_datetime.outputs.datetime }} (${{ steps.get_sha.outputs.short_sha }})
+          name: pre-version ${{ steps.get_version.outputs.version }} ${{ steps.get_datetime.outputs.datetime }} (${{ steps.get_sha.outputs.short_sha }})
           prerelease: true
           artifacts: ${{ steps.rename_wheel.outputs.wheel_path }}
           body: |
             **這是測試版，使用github action製作**
-            - 基礎版本： ${{ steps.get_version.outputs.version }}
+            - base version： ${{ steps.get_version.outputs.version }}
             - 時間： ${{ steps.get_datetime.outputs.datetime }}
-            - github_sha： ${{ steps.get_sha.outputs.short_sha }}
+            - short_github_sha： ${{ steps.get_sha.outputs.short_sha }}
+            - full_github_sha： ${{ github.sha }}
