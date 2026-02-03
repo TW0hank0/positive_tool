@@ -14,5 +14,8 @@
     ],
     "basedpyright.analysis.exclude": [
         ".venv/"
-    ]
+    ],
+    "[toml]": {
+        "editor.defaultFormatter": "tamasfe.even-better-toml"
+    }
 }

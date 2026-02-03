@@ -14,6 +14,7 @@ build-backend = "setuptools.build_meta"
 [project.optional-dependencies]
 test = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]
 build = ["twine"]
+check = ["mypy>=1.19.1", "ruff>=0.14.14", "ty>=0.0.14"]
 
 [project.urls]
 Homepage = "https://github.com/TW0hank0/positive_tool"
