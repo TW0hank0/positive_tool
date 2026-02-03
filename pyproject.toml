@@ -19,6 +19,9 @@ build = ["twine"]
 Homepage = "https://github.com/TW0hank0/positive_tool"
 Repository = "https://github.com/TW0hank0/positive_tool"
 
+[tool.setuptools.package-data]
+positive-tool = ["py.typed"]
+
 [tool.pytest.ini_options]
 addopts = "-v --cov=positive_tool --cov-report=term-missing"
 testpaths = ["tests"]
