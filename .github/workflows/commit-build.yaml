@@ -89,7 +89,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: prev-${{ steps.get_version.outputs.version }}+${{ steps.get_datetime.outputs.datetime }} (${{ steps.get_sha.outputs.short_sha }})
+          tag: prev-${{ steps.get_version.outputs.version }}-${{ steps.get_datetime.outputs.datetime }}-${{ steps.get_sha.outputs.short_sha }}
           name: pre-version ${{ steps.get_version.outputs.version }} ${{ steps.get_datetime.outputs.datetime }} (${{ steps.get_sha.outputs.short_sha }})
           prerelease: true
           artifacts: ${{ steps.rename_wheel.outputs.wheel_path }}
