@@ -16,7 +16,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python:
-          [cpython-3.11, cpython-3.12, cpython-3.13, cpython-3.14, cpython-3.15, cpython-3.13+freethreaded, cpython-3.14+freethreaded, cpython-3.15+freethreaded, pypy-3.11, graalpy-3.12, graalpy-3.11]
+          [cpython-3.11, cpython-3.12, cpython-3.13, cpython-3.14, cpython-3.15, cpython-3.13+freethreaded, cpython-3.14+freethreaded, cpython-3.15+freethreaded, pypy-3.11]
 
     steps:
       - name: Checkout code

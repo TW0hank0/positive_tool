@@ -428,13 +428,15 @@ class SemVer:  # TODO: 寫測試
         self,
         major: Union[UInt, int],
         minor: Union[UInt, int],
-        patch: Union[UInt, int] = UInt(0),
+        patch: Union[UInt, int, None] = None,
     ) -> None:
         #
         ArgType("major", major, [UInt, int])
         ArgType("minor", minor, [UInt, int])
-        ArgType("patch", patch, [UInt, int])
+        ArgType("patch", patch, [UInt, int, None])
         #
+        if patch is None:
+            patch = UInt(0)
         if type(major) is UInt:
             self.major = major
         else:

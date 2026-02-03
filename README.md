@@ -29,3 +29,13 @@ except exceptions.arg.ArgTypeWrongTypeError:
 >>>test_func(10)
 10
 ```
+
+### 支援
+
+- cpython
+
+workflow已測試版本：3.11~3.15
+
+- pypy
+
+workflow已測試版本：3.11

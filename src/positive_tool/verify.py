@@ -218,8 +218,13 @@ class ArgType:
                     try:
                         hint = type_hints[param_name]
                     except KeyError:
+                        func_name = (
+                            func.__name__
+                            if hasattr(func, "__name__") is True
+                            else "unknown-func"
+                        )
                         raise exceptions.verify.ArgTypeNoTypehintError(
-                            f"{func.__name__}的{param_name}沒有type hint"
+                            f"{func_name}的{param_name}沒有type hint"
                         )
                     ArgType(param_name, value, [hint])
                 return func(*args, **kwargs)
