@@ -34,11 +34,11 @@ except exceptions.arg.ArgTypeWrongTypeError:
 
 - cpython
 
-workflow已測試版本：3.11~3.15
+workflow測試版本：3.11~3.15
 
 - pypy
 
-workflow已測試版本：3.11
+workflow測試版本：3.11
 
 ### 安裝
 
@@ -52,4 +52,18 @@ pip install positive-tool
 
 ```
 uv add positive-tool
+```
+
+**安裝GUI依賴**
+
+使用pip
+
+```
+pip install "positive-tool[gui]"
+```
+
+使用uv
+
+```
+uv add "positive-tool[gui]"
 ```
