@@ -56,7 +56,7 @@ def test_arg_argtype_type_hints():
     with pytest.raises(
         expected_exception=exceptions.verify.ArgTypeWrongTypeError
     ):
-        verify.ArgType("test_wrong_arg", 10, Literal["", 0.0])
+        verify.ArgType("test_wrong_arg", 10, Literal["", 0.0])  # ty:ignore[invalid-type-form]
 
 
 def test_arg_ArgType_auto():

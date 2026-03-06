@@ -9,7 +9,7 @@ from .exceptions import exceptions
 
 
 class ArgType:
-    """`positive_tool`工具：檢查參數類別"""
+    """檢查參數類別"""
 
     __slots__: list[str] = [
         "arg_name",
@@ -201,12 +201,13 @@ class ArgType:
     def auto(cls, func: Callable | None = None):
         """從type hint建立ArgType
 
-        此功能使用到inspect
+        此功能使用 `inspect`
 
         如需更好的性能請手動建立ArgType
-
-        `ArgType.auto`"""
-        if (isinstance(func, Callable) is False) or (func is None):
+        """
+        if func is None:
+            return ArgType.auto
+        elif (isinstance(func, Callable) is False) and (func is not None):
             raise exceptions.verify.ArgTypeWrongTypeError(
                 "ArgType.auto應傳入Callable！"
             )
@@ -230,3 +231,7 @@ class ArgType:
                 return func(*args, **kwargs)
 
             return wrapper
+
+
+def eq_type_hint(value: Any, type_hint: Any) -> bool:
+    pass

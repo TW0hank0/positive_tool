@@ -13,12 +13,6 @@ uv sync --extra test
 uv run pytest
 ```
 
-## 貢獻
-- 歡迎提交 issue。
-
-## 已知問題
-*暫未發現*
-
 ## 使用
 
 ### 安裝
@@ -56,8 +50,3 @@ except exceptions.verify.ArgTypeWrongTypeError:
 >>>test_func(10)
 10
 ```
-
-## 計劃
-
-### 目前計劃
-- [ ] 完成README使用範例

@@ -524,8 +524,6 @@ class SemVer:  # TODO: 寫測試
     """語意化版本（SemVer）
 
     [詳見：https://semver.org/lang/zh-TW/](https://semver.org/lang/zh-TW/)
-
-    `positive_tool`
     """
 
     major: Union[UInt, int]
@@ -535,8 +533,8 @@ class SemVer:  # TODO: 寫測試
 
     def __init__(
         self,
-        major: Union[UInt, int],
-        minor: Union[UInt, int],
+        major: Union[UInt, int] = UInt(0),
+        minor: Union[UInt, int] = UInt(1),
         patch: Union[UInt, int] = UInt(0),
     ) -> None:
         #
@@ -560,7 +558,7 @@ class SemVer:  # TODO: 寫測試
     @classmethod
     def parse(
         cls, item: Union[tuple[int, int, int], list[int], Self, str]
-    ) -> Self | NoReturn:  # type: ignore
+    ) -> Self | NoReturn:
         #
         arg_item = ArgType("item", item, [tuple, list, SemVer, str])
         #
@@ -626,8 +624,12 @@ class SemVer:  # TODO: 寫測試
         else:
             raise NotImplementedError
 
-    def __str__(self) -> str:
+    def to_string(self) -> str:
         return f"{self.major}.{self.minor}.{self.patch}"
+
+    def __str__(self) -> str:
+        # return f"{self.major}.{self.minor}.{self.patch}"
+        return self.to_string()
 
     def __repr__(self) -> str:
         return f"SemVer({self.major}, {self.minor}, {self.patch})"
@@ -656,16 +658,8 @@ class ProjectInfo:  # TODO：寫測試
         auto_get: bool = True,
     ) -> None:
         """
-        __init__ 的 Docstring
-
-        :param project_name: 專案名稱
-        :type project_name: str
-        :param project_path: 專案路徑（位子）
-        :type project_path: str
-        :param project_version: 專案版本
-        :type project_version: SemVer | tuple[int, int, int]
-        :param project_license: 專案協議
-        :type project_license: str
+        Args:
+            project_name (str): 專案名稱
         """
         self.project_name = project_name
         #
