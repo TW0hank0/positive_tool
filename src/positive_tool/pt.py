@@ -8,7 +8,7 @@ from typing import Self, Literal, Union, Any, NoReturn
 from rich.logging import RichHandler
 
 from .exceptions import exceptions
-from .verify import ArgType
+from .verify import ArgType, UInt
 
 
 def find_project_path(
@@ -18,7 +18,7 @@ def find_project_path(
     ),
     *,
     dir_deep_max: int = 15,
-) -> os.PathLike | str:
+) -> str | os.PathLike:
     """
     find_project_path 可以在某些時候找到專案資料夾
 
@@ -39,6 +39,7 @@ def find_project_path(
         is_folder=True,
     )
     ArgType("dir_deep_max", dir_deep_max, int)
+    #
     dir_deep_count: int = 0
     project_path: str | os.PathLike = start_find_path
     project_path_log: list[str] = []
@@ -508,7 +509,7 @@ def get_project_info(
     )
     #
     if bytes_to_mb(os.path.getsize(pyproject_file_path)) > 10:
-        raise exceptions.verify.FileTooLarge(
+        raise exceptions.verify.ArgTypeFileTooLarge(
             f"檔案過大，檔案：「{pyproject_file_path}」"
         )
     else:
@@ -540,8 +541,10 @@ class SemVer:  # TODO: 寫測試
         #
         ArgType("major", major, [UInt, int])
         ArgType("minor", minor, [UInt, int])
-        ArgType("patch", patch, [UInt, int])
+        ArgType("patch", patch, [UInt, int, None])
         #
+        if patch is None:
+            patch = UInt(0)
         if type(major) is UInt:
             self.major = major
         else:
@@ -562,15 +565,15 @@ class SemVer:  # TODO: 寫測試
         #
         arg_item = ArgType("item", item, [tuple, list, SemVer, str])
         #
-        if type(item) in [SemVer]:
-            return cls(item.major, item.minor, item.patch)  # type: ignore
-        elif type(item) in [tuple, list]:
-            if len(item) > 3 or len(item) < 2:  # type: ignore
+        if type(item) is SemVer:
+            return cls(item.major, item.minor, item.patch)
+        elif type(item) is tuple:
+            if len(item) > 3 or len(item) < 2:
                 arg_item.raise_arg_wrong_type_error()
             else:
-                return cls(*item)  # type: ignore
-        elif type(item) in [str]:
-            ver: list[str] = item.split(".", 3)  # type: ignore
+                return cls(*item)
+        elif type(item) is str:
+            ver: list[str] = item.split(".", 3)
             if len(ver) > 3 or len(ver) < 2:
                 arg_item.raise_arg_wrong_type_error()
             else:

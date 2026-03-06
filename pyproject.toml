@@ -15,10 +15,15 @@ build-backend = "setuptools.build_meta"
 [project.optional-dependencies]
 test = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]
 build = ["twine"]
+check = ["mypy>=1.19.1", "ruff>=0.14.14", "ty>=0.0.14"]
+gui = ["pyside6>=6.10.2"]
 
 [project.urls]
 Homepage = "https://github.com/TW0hank0/positive_tool"
 Repository = "https://github.com/TW0hank0/positive_tool"
+
+[tool.setuptools.package-data]
+positive_tool = ["py.typed"]
 
 [tool.pytest.ini_options]
 addopts = "-v --cov=positive_tool --cov-report=term-missing"

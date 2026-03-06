@@ -50,3 +50,41 @@ except exceptions.verify.ArgTypeWrongTypeError:
 >>>test_func(10)
 10
 ```
+
+### 支援
+
+- cpython
+
+workflow測試版本：3.11~3.15
+
+- pypy
+
+workflow測試版本：3.11
+
+### 安裝
+
+使用pip
+
+```
+pip install positive-tool
+```
+
+使用uv
+
+```
+uv add positive-tool
+```
+
+**安裝GUI依賴**
+
+使用pip
+
+```
+pip install "positive-tool[gui]"
+```
+
+使用uv
+
+```
+uv add "positive-tool[gui]"
+```
