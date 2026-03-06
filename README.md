@@ -88,3 +88,9 @@ pip install "positive-tool[gui]"
 ```
 uv add positive-tool --extra gui
 ```
+
+### 協議
+
+版權所有 (C) 2026 TW0hank0
+
+本程式基於 GNU Affero General Public License v3 授權
