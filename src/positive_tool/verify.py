@@ -263,3 +263,4 @@ class ArgType:
 
 def eq_type_hint(value: Any, type_hint: Any) -> bool:
     pass
+    return False  # TODO

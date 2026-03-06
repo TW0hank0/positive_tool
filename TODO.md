@@ -7,5 +7,6 @@
 ## 已計劃
 - [ ] verify: Json結構檢查
 - [ ] about page tool （關於界面）(PySide6+Rich)
+- [ ] 使用`positive_project_template` 的workflow、license
 
 ## 已完成

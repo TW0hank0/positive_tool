@@ -4,7 +4,7 @@
 
 [正體中文](https://github.com/TW0hank0/positive_tool/blob/master/README.md) | [English](https://github.com/TW0hank0/positive_tool/blob/master/READMEs/README_en.md)
 
-`positive_tool`是一個輔助開發的 Python 工具函式庫。目標提供小而實用的工具。
+`positive_tool` 是一個面向開發者的工具庫。
 
 
 ## 測試
@@ -86,5 +86,5 @@ pip install "positive-tool[gui]"
 使用uv
 
 ```
-uv add "positive-tool[gui]"
+uv add positive-tool --extra gui
 ```
