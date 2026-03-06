@@ -84,12 +84,12 @@ def build_logger(
     ArgType(
         "log_level_file",
         log_level_file,
-        [0, 10, 20, 30, 40, 50],
+        [Literal[0, 10, 20, 30, 40, 50]],
     )
     ArgType(
         "log_level_console",
         log_level_console,
-        [0, 10, 20, 30, 40, 50],
+        [Literal[0, 10, 20, 30, 40, 50]],
     )
     ArgType(
         "with_rich_traceback",
@@ -707,17 +707,7 @@ ProjectInfo(
 
 def bytes_to_mb(size_bytes: int) -> float:
     # return size / 1000 / 1000
-    return FileSize(size_bytes, FileSizeTypes.BYTES).to_mb()
-
-
-class FileSizeTypes(enum.Enum):
-    """檔案大小的單位
-
-    (目前的單位都是10進位)"""
-
-    BYTES = enum.auto()
-    KB = enum.auto()
-    MB = enum.auto()
+    return FileSize(size_bytes, "BYTES").to_mb()
 
 
 class FileSize:  # TODO：寫測試
@@ -729,18 +719,18 @@ class FileSize:  # TODO：寫測試
     def __init__(
         self,
         file_size: int,
-        size_type: FileSizeTypes = FileSizeTypes.MB,
+        size_type: Literal["BYTES", "KB", "MB"] = "MB",
     ) -> None:
         #
         ArgType("file_size", file_size, [int])
-        ArgType("size_type", size_type, [FileSizeTypes, int])
+        ArgType("size_type", size_type, Literal["BYTES", "KB", "MB"])
         #
         match size_type:
-            case FileSizeTypes.BYTES:
+            case "BYTES":
                 self.file_size_bytes = file_size
-            case FileSizeTypes.KB:
+            case "KB":
                 self.file_size_bytes = file_size * 1000
-            case FileSizeTypes.MB:
+            case "MB":
                 self.file_size_bytes = file_size * 1000 * 1000
 
     def to_mb(self) -> float:
@@ -748,7 +738,7 @@ class FileSize:  # TODO：寫測試
 
     @classmethod
     def bytes_to_mb(cls, size_bytes: int) -> float:
-        return cls(size_bytes, FileSizeTypes.BYTES).to_mb()
+        return cls(size_bytes, "BYTES").to_mb()
 
     def __repr__(self) -> str:
         return f"FileSize({self.file_size_bytes}, FileSizeTypes.BYTES)"

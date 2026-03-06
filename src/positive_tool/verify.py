@@ -36,26 +36,10 @@ class ArgType:
         exists_file_size_limit_mb: int | None = None,
     ) -> None:
         """
-        __init__ 的 Docstring
-
-        :param arg_name: arg名稱
-        :type arg_name: str
-        :param arg_value: 參數值
-        :type arg_value: Any
-        :param arg_type: 參數類別
-        :type arg_type: list[Any] | Iterable | Any
-        :param do_check_value_type: init後檢查參數
-        :type do_check_value_type: bool
-        :param is_exists: 是否存在
-        :type is_exists: bool
-        :param is_file: 是否為檔案
-        :type is_file: bool
-        :param is_folder: 是否是資料夾
-        :type is_folder: bool
-        :param check_dir_already_exists: 說明
-        :type check_dir_already_exists: bool
-        :param exists_file_size_limit_mb: 檔案大小限制，單位是MB，小於1代表無限制大小
-        :type exists_file_size_limit_mb: int
+        Args:
+            arg_name (str): 參數名稱
+            arg_value (Any): 參數值
+            arg_type (list[Any] | Any): 參數類型
         """
         # TODO:移除`is_exists`的檢查檔案為存在，只檢查存在
         # TODO: 整理程式碼
@@ -103,15 +87,16 @@ class ArgType:
                 return None
         else:
             for i in self.arg_type:
-                if typing.get_origin(i) is None:
+                if typing.get_origin(i) is None or type(i) in [int]:
                     # 不是type hint
                     if type(i) is type(object):
                         # class
                         if type(self.arg_value) is i:
                             break
-                    elif type(i) is not type(object):
+                    else:  # if type(i) is not type(object):
                         if (
                             type(self.arg_value) is type(i)
+                            # isinstance(self.arg_value, i) is True
                             and self.arg_value == i
                         ):
                             break
@@ -216,8 +201,9 @@ class ArgType:
     def raise_arg_wrong_type_error(self) -> typing.NoReturn:
         # TODO:錯誤類型可自訂
         # TODO:錯誤可自訂callback
+        # TODO: Better Error Msg
         raise exceptions.verify.ArgTypeWrongTypeError(
-            f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為：{type(self.arg_value)}！"
+            f"參數 {self.arg_name} 的類型錯誤，應為：{self.arg_type}，卻為 ({type(self.arg_value)})：{self.arg_value}！"
         )
 
     @classmethod
