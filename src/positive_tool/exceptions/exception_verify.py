@@ -25,7 +25,3 @@ class ArgTypeNoTypehintError(ArgTypeError):
     """沒有type hint
 
     用於`ArgType.auto`"""
-
-
-class UIntValueError(PositiveToolError):
-    """UInt錯誤，通常因為非正數（負數）"""

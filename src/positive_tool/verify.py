@@ -3,7 +3,7 @@ import inspect
 import typing
 import functools
 
-from typing import Any, Iterable, Literal, Union, Callable, Self, NoReturn
+from typing import Any, Iterable, Literal, Union, Callable
 
 from .exceptions import exceptions
 

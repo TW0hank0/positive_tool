@@ -8,7 +8,7 @@ from typing import Self, Literal, Union, Any, NoReturn
 from rich.logging import RichHandler
 
 from .exceptions import exceptions
-from .verify import ArgType, UInt
+from .verify import ArgType
 
 
 def find_project_path(
@@ -571,7 +571,7 @@ class SemVer:  # TODO: 寫測試
             if len(item) > 3 or len(item) < 2:
                 arg_item.raise_arg_wrong_type_error()
             else:
-                return cls(*item)
+                return cls(*item)  # ty:ignore[invalid-argument-type]
         elif type(item) is str:
             ver: list[str] = item.split(".", 3)
             if len(ver) > 3 or len(ver) < 2:

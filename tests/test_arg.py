@@ -60,12 +60,12 @@ def test_arg_argtype_type_hints():
 
 
 def test_arg_ArgType_auto():
-    @verify.ArgType.auto
+    @verify.ArgType.auto()
     def tmp_func(arg: int):
         print(f"value:{arg}")
 
     with pytest.raises(
         expected_exception=exceptions.verify.ArgTypeWrongTypeError
     ):
-        tmp_func("")
+        tmp_func("")  # type: ignore
     tmp_func(10)
