@@ -1,9 +1,7 @@
-import os
 import logging
+import os
 import tomllib
-import enum
-
-from typing import Self, Literal, Union, Any, NoReturn
+from typing import Any, Literal, NoReturn, Self, Union
 
 from rich.logging import RichHandler
 
@@ -13,9 +11,7 @@ from .verify import ArgType
 
 def find_project_path(
     project_name: str,
-    start_find_path: os.PathLike | str = os.path.abspath(
-        os.path.dirname(__file__)
-    ),
+    start_find_path: os.PathLike | str,
     *,
     dir_deep_max: int = 15,
 ) -> str | os.PathLike:
@@ -30,7 +26,7 @@ def find_project_path(
     :type dir_deep_max: int
     """
     # 檢查參數
-    ArgType("project_name", project_name, str)
+    ArgType("project_name", project_name, [str])
     ArgType(
         "start_find_path",
         start_find_path,
@@ -38,8 +34,7 @@ def find_project_path(
         is_exists=True,
         is_folder=True,
     )
-    ArgType("dir_deep_max", dir_deep_max, int)
-    #
+    ArgType("dir_deep_max", dir_deep_max, [int])
     dir_deep_count: int = 0
     project_path: str | os.PathLike = start_find_path
     project_path_log: list[str] = []
@@ -52,14 +47,13 @@ def find_project_path(
             break
         else:
             project_path = os.path.normpath(os.path.join(project_path, ".."))
-            if len(project_path_log) > 0:
-                if (
-                    project_path
-                    == project_path_log[(len(project_path_log) - 1)]
-                ):
-                    raise exceptions.pt.DirNotFoundError(
-                        f"找不到： {project_name}，已搜尋深度： {dir_deep_count}，已搜尋資料夾： {project_path_log}"
-                    )
+            if (
+                len(project_path_log) > 0
+                and project_path == project_path_log[(len(project_path_log) - 1)]
+            ):
+                raise exceptions.pt.DirNotFoundError(
+                    f"找不到： {project_name}，已搜尋深度： {dir_deep_count}，已搜尋資料夾： {project_path_log}"
+                )
             project_path_log.append(project_path)
         dir_deep_count += 1
     del project_path_log
@@ -106,9 +100,7 @@ def build_logger(
     )
     console_handler.setLevel(log_level_console)
     # 建立 FileHandler
-    file_handler = logging.FileHandler(
-        log_file_path, encoding="utf-8", mode="a"
-    )
+    file_handler = logging.FileHandler(log_file_path, encoding="utf-8", mode="a")
     file_handler.setLevel(log_level_file)
     # 設定 Formatter
     formatter = logging.Formatter(fmt=format, datefmt=time_format)
@@ -119,7 +111,6 @@ def build_logger(
         datefmt=time_format,
         handlers=[console_handler, file_handler],
     )
-    #
     return logging.getLogger(logger_name)
 
 
@@ -129,28 +120,22 @@ type_hint_UInt_init_arg_arg_value = Union[int, float, "UInt"]
 class UInt:
     """絕對正數"""
 
-    __slot__: list[str] = ["value"]
-
     def __init__(
         self,
         value: type_hint_UInt_init_arg_arg_value | Self,
     ) -> None:
-        #
         arg_value = ArgType(
             "value",
             value,
             [type_hint_UInt_init_arg_arg_value, UInt],
         )
-        #
         if type(value) is int:
             value_int = value
         elif type(value) in [float, UInt]:
             value_int = int(value)
-        # elif isinstance(value, (float, str, SupportsInt)) is True:
-        #     value_int = int(value)
         else:
             arg_value.raise_arg_wrong_type_error()
-        #
+
         if value_int < 0:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
@@ -159,7 +144,7 @@ class UInt:
     def _raise_uint_error(self) -> NoReturn:
         raise exceptions.pt.UIntValueError("UInt不能小於零！")
 
-    def __add__(self, other: int | float | Self):
+    def __add__(self, other: float | Self):
         """符號：`+`"""
         # arg檢查
         # ArgType("other", other, [int, float, UInt])
@@ -180,14 +165,13 @@ class UInt:
             other_int = other.value
         else:
             raise NotImplementedError("僅支援int、float及UInt！")
-        #
         if other_int < 0 and abs(other_int) > self.value:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             result = UInt(self.value + other_int)
             return result
 
-    def __iadd__(self, other: int | float | Self):
+    def __iadd__(self, other: float | Self):
         """符號：`+=`"""
         other_int: int
         # if isinstance(other, float):
@@ -206,14 +190,13 @@ class UInt:
             other_int = other.value
         else:
             raise NotImplementedError("僅支援int、float及UInt！")
-        #
         if other_int < 0 and abs(other_int) > self.value:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             self.value += other_int
             return self
 
-    def __radd__(self, other: int | float | Self):
+    def __radd__(self, other: float | Self):
         # if isinstance(other, int):
         #     result = other + self.value
         # elif isinstance(other, float):
@@ -228,7 +211,7 @@ class UInt:
             raise NotImplementedError("僅支援int及float！")
         return result
 
-    def __sub__(self, other: int | float | Self):
+    def __sub__(self, other: float | Self):
         """符號：`-`"""
         other_int: int
         # if isinstance(other, int):
@@ -247,14 +230,13 @@ class UInt:
             other_int = other.value
         else:
             raise NotImplementedError("僅支援int、float及UInt！")
-        #
         if other_int > 0 and abs(other_int) > self.value:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             result = UInt(self.value - other_int)
             return result
 
-    def __isub__(self, other: int | float | Self):
+    def __isub__(self, other: float | Self):
         """符號：`-=`"""
         # if isinstance(other, (float)):
         #     other_int = int(other)
@@ -272,14 +254,13 @@ class UInt:
             other_int = other.value
         else:
             raise NotImplementedError("僅支援int、float及UInt！")
-        #
         if other_int > 0 and abs(other_int) > self.value:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             self.value -= other_int
             return self
 
-    def __rsub__(self, other: int | float):
+    def __rsub__(self, other: float):
         # if isinstance(other, int):
         #     result = other - self.value
         # elif isinstance(other, float):
@@ -294,7 +275,7 @@ class UInt:
             raise NotImplementedError("僅支援int、float及UInt！")
         return result
 
-    def __mul__(self, other: int | float | Self):
+    def __mul__(self, other: float | Self):
         """符號：`*`"""
         # ArgType("other", other, [int, float, UInt])
         #
@@ -314,14 +295,13 @@ class UInt:
             other_int = other.value
         else:
             raise NotImplementedError("僅支援int、float及UInt！")
-        #
         if other_int < 0 and other_int != 0:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             result = UInt(self.value * other_int)
             return result
 
-    def __imul__(self, other: int | float | Self):
+    def __imul__(self, other: float | Self):
         """符號：`*=`"""
         # ArgType("other", other, [int, float, UInt])
         #
@@ -341,14 +321,13 @@ class UInt:
             other_int = other.value
         else:
             raise NotImplementedError("僅支援int、float及UInt！")
-        #
         if other_int < 0:
             raise exceptions.pt.UIntValueError("UInt不能小於零！")
         else:
             self.value *= other_int
             return self
 
-    def __rmul__(self, other: int | float):
+    def __rmul__(self, other: float):
         # if isinstance(other, int):
         #     result = other * self.value
         # elif isinstance(other, float):
@@ -403,7 +382,7 @@ class UInt:
             raise NotImplementedError("僅支援int、float及UInt！")
         return self.value != other_int
 
-    def __gt__(self, other: int | float | Self):
+    def __gt__(self, other: float | Self):
         """符號：`>`"""
         # if isinstance(other, int):
         #     other_int = other
@@ -423,7 +402,7 @@ class UInt:
             raise NotImplementedError("僅支援int、float及UInt！")
         return self.value > other_int
 
-    def __ge__(self, other: int | float | Self):
+    def __ge__(self, other: float | Self):
         """符號：`>=`"""
         # if isinstance(other, int):
         #     other_int = other
@@ -443,7 +422,7 @@ class UInt:
             raise NotImplementedError("僅支援int、float及UInt！")
         return self.value >= other_int
 
-    def __lt__(self, other: int | float | Self):
+    def __lt__(self, other: float | Self):
         """符號：`<`"""
         # if isinstance(other, int):
         #     other_int = other
@@ -499,7 +478,6 @@ class UInt:
 def get_project_info(
     pyproject_file_path: str,
 ) -> "ProjectInfo":  # TODO: 寫測試
-    #
     ArgType(
         "pyproject_file_path",
         pyproject_file_path,
@@ -507,18 +485,12 @@ def get_project_info(
         is_exists=True,
         is_file=True,
     )
-    #
-    if bytes_to_mb(os.path.getsize(pyproject_file_path)) > 10:
-        raise exceptions.verify.ArgTypeFileTooLarge(
-            f"檔案過大，檔案：「{pyproject_file_path}」"
-        )
-    else:
-        with open(pyproject_file_path, "r") as f:
-            file_str = f.read()
-        data = tomllib.loads(file_str)
-        name = data["project"]["name"]
-        version = data["project"]["version"]
-        return ProjectInfo(name, project_version=version, auto_get=False)
+    with open(pyproject_file_path, "r") as f:
+        file_str = f.read()
+    data = tomllib.loads(file_str)
+    name = data["project"]["name"]
+    version = data["project"]["version"]
+    return ProjectInfo(name, project_version=version, auto_get=False)
 
 
 class SemVer:  # TODO: 寫測試
@@ -527,51 +499,51 @@ class SemVer:  # TODO: 寫測試
     [詳見：https://semver.org/lang/zh-TW/](https://semver.org/lang/zh-TW/)
     """
 
-    major: Union[UInt, int]
-    minor: Union[UInt, int]
-    patch: Union[UInt, int]
-    __slot__ = ["major", "minor", "patch"]
+    major: UInt | int
+    minor: UInt | int
+    patch: UInt | int
 
     def __init__(
         self,
-        major: Union[UInt, int] = UInt(0),
-        minor: Union[UInt, int] = UInt(1),
-        patch: Union[UInt, int] = UInt(0),
+        major: UInt | int | None = None,
+        minor: UInt | int | None = None,
+        patch: UInt | int | None = None,
     ) -> None:
-        #
         ArgType("major", major, [UInt, int])
         ArgType("minor", minor, [UInt, int])
         ArgType("patch", patch, [UInt, int, None])
-        #
-        if patch is None:
-            patch = UInt(0)
-        if type(major) is UInt:
+
+        if major is None:
+            self.major = UInt(0)
+        elif type(major) is UInt:
             self.major = major
         else:
             self.major = UInt(major)
-        if type(major) is UInt:
+
+        if minor is None:
+            self.minor = UInt(1)
+        elif type(minor) is UInt:
             self.minor = minor
         else:
             self.minor = UInt(minor)
-        if type(major) is UInt:
+
+        if patch is None:
+            self.patch = UInt(0)
+        elif type(patch) is UInt:
             self.patch = patch
         else:
             self.patch = UInt(patch)
 
     @classmethod
-    def parse(
-        cls, item: Union[tuple[int, int, int], list[int], Self, str]
-    ) -> Self | NoReturn:
-        #
+    def parse(cls, item: tuple[int, int, int] | list[int] | Self | str) -> Self:
         arg_item = ArgType("item", item, [tuple, list, SemVer, str])
-        #
         if type(item) is SemVer:
             return cls(item.major, item.minor, item.patch)
         elif type(item) is tuple:
             if len(item) > 3 or len(item) < 2:
                 arg_item.raise_arg_wrong_type_error()
             else:
-                return cls(*item)  # ty:ignore[invalid-argument-type]
+                return cls(*item)  # ty: ignore[invalid-argument-type]
         elif type(item) is str:
             ver: list[str] = item.split(".", 3)
             if len(ver) > 3 or len(ver) < 2:
@@ -583,41 +555,29 @@ class SemVer:  # TODO: 寫測試
 
     def __gt__(self, other: Self) -> bool:
         """符號：`>`"""
-        #
         ArgType("other", other, [SemVer])
-        #
-        if (
+        return (
             self.major > other.major
-            or (self.major >= other.major and self.minor > other.minor)
-            or (
-                self.major >= other.major
-                and self.minor >= other.minor
-                and self.patch > other.patch
-            )
-        ):
-            return True
-        else:
-            return False
+            or self.major >= other.major
+            and self.minor > other.minor
+            or self.major >= other.major
+            and self.minor >= other.minor
+            and self.patch > other.patch
+        )
 
-    def __lt__(self, other: Self) -> bool | NoReturn:
+    def __lt__(self, other: Self) -> bool:
         """符號：`<`"""
-        #
         ArgType("other", other, [SemVer])
-        #
-        if (
-            (
-                self.patch < other.patch
-                and self.minor <= other.minor
-                and self.major <= other.major
-            )
-            or (self.minor < other.minor and self.major <= other.major)
-            or (self.major < other.major)
-        ):
-            return True
-        else:
-            return False
+        return (
+            self.patch < other.patch
+            and self.minor <= other.minor
+            and self.major <= other.major
+            or self.minor < other.minor
+            and self.major <= other.major
+            or self.major < other.major
+        )
 
-    def __eq__(self, other: Self | Any) -> bool | NoReturn:
+    def __eq__(self, other: Self | Any) -> bool:
         if type(other) is SemVer:
             return (
                 self.major == other.major
@@ -631,7 +591,6 @@ class SemVer:  # TODO: 寫測試
         return f"{self.major}.{self.minor}.{self.patch}"
 
     def __str__(self) -> str:
-        # return f"{self.major}.{self.minor}.{self.patch}"
         return self.to_string()
 
     def __repr__(self) -> str:
@@ -643,13 +602,6 @@ class ProjectInfo:  # TODO：寫測試
 
     `positive_tool`
     """
-
-    __slot__: list[str] = [
-        "project_name",
-        "project_path",
-        "project_version",
-        "project_license_file_path",
-    ]
 
     def __init__(
         self,
@@ -665,7 +617,7 @@ class ProjectInfo:  # TODO：寫測試
             project_name (str): 專案名稱
         """
         self.project_name = project_name
-        #
+
         need_auto_get = False
         if type(project_version) is SemVer:
             self.project_version = project_version
@@ -674,7 +626,9 @@ class ProjectInfo:  # TODO：寫測試
         else:
             self.project_version = SemVer.parse(project_version)
         if project_path is None:
-            self.project_path = find_project_path(self.project_name)
+            self.project_path = find_project_path(
+                self.project_name, os.path.dirname(__file__)
+            )
         else:
             self.project_path = project_path
         self.project_license_file_path = project_license_file_path
@@ -696,52 +650,10 @@ class ProjectInfo:  # TODO：寫測試
     def __str__(self) -> str:
         text = f"""
 ProjectInfo(
-└─{self.project_name}:
+  {self.project_name}:
     ├─path={self.project_path}
     ├─version={self.project_version}
     └─license_file={self.project_license_file_path}
 )
 """
         return text
-
-
-def bytes_to_mb(size_bytes: int) -> float:
-    # return size / 1000 / 1000
-    return FileSize(size_bytes, "BYTES").to_mb()
-
-
-class FileSize:  # TODO：寫測試
-    """檔案大小"""
-
-    __slots__ = ["file_size_bytes"]
-
-    # TODO:待完成
-    def __init__(
-        self,
-        file_size: int,
-        size_type: Literal["BYTES", "KB", "MB"] = "MB",
-    ) -> None:
-        #
-        ArgType("file_size", file_size, [int])
-        ArgType("size_type", size_type, Literal["BYTES", "KB", "MB"])
-        #
-        match size_type:
-            case "BYTES":
-                self.file_size_bytes = file_size
-            case "KB":
-                self.file_size_bytes = file_size * 1000
-            case "MB":
-                self.file_size_bytes = file_size * 1000 * 1000
-
-    def to_mb(self) -> float:
-        return self.file_size_bytes / 1000 / 1000
-
-    @classmethod
-    def bytes_to_mb(cls, size_bytes: int) -> float:
-        return cls(size_bytes, "BYTES").to_mb()
-
-    def __repr__(self) -> str:
-        return f"FileSize({self.file_size_bytes}, FileSizeTypes.BYTES)"
-
-    def __str__(self) -> str:  # TODO:待優化：自動單位
-        return f"{self.file_size_bytes}BYTES"

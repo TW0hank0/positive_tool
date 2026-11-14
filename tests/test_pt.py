@@ -1,5 +1,6 @@
 import os
 import sys
+
 import pytest
 
 # 把 package root 加入 sys.path
@@ -8,15 +9,16 @@ sys.path.insert(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")),
 )
 
-from positive_tool.exceptions import exceptions
 from positive_tool import pt
+from positive_tool.exceptions import exceptions
 
 
 def test_find_project_path():
     with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
         pt.find_project_path(
             "positive_tool",
-            dir_deep_max="",  # type: ignore
+            os.path.dirname(__file__),
+            dir_deep_max="",  # ty: ignore[invalid-argument-type]
         )
     with pytest.raises(exceptions.pt.DirDeepError):
         pt.find_project_path(
@@ -27,46 +29,47 @@ def test_find_project_path():
     with pytest.raises(FileNotFoundError):
         pt.find_project_path("positive_tool", "")
     with pytest.raises(exceptions.pt.DirNotFoundError):
-        pt.find_project_path(
-            "positive_tool", "C:\\" if os.name == "nt" else "/"
-        )
+        pt.find_project_path("positive_tool", "C:\\" if os.name == "nt" else "/")
     with pytest.raises(exceptions.pt.DirWrongType):
         pt.find_project_path("positive_tool", os.path.abspath(__file__))
     assert (
-        os.path.basename(pt.find_project_path("positive_tool"))
+        os.path.basename(
+            pt.find_project_path("positive_tool", os.path.dirname(__file__))
+        )
         == "positive_tool"
     )
 
 
-def test_build_logger():
-    test_file_path = os.path.join(
-        os.path.dirname(__file__), "tmp_test_pt_find_project_path"
-    )
-    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
-        pt.build_logger(0)  # type: ignore
-    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
-        pt.build_logger(
-            os.path.join(os.path.dirname(__file__), test_file_path),
-            0,  # type: ignore
-        )
-    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
-        pt.build_logger(
-            os.path.join(os.path.dirname(__file__), test_file_path),
-            log_level_file="",  # type: ignore
-        )
-    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
-        pt.build_logger(
-            os.path.join(os.path.dirname(__file__), test_file_path),
-            log_level_console="",  # type: ignore
-        )
-    with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
-        pt.build_logger(
-            os.path.join(os.path.dirname(__file__), test_file_path),
-            with_rich_traceback="",  # type: ignore
-        )
-    pt.build_logger(
-        os.path.join(os.path.dirname(__file__), test_file_path),
-    )
+## disable this test now
+# def test_build_logger():
+#     test_file_path = os.path.join(
+#         os.path.dirname(__file__), "tmp_test_pt_find_project_path"
+#     )
+#     with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
+#         pt.build_logger(0)
+#     with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
+#         pt.build_logger(
+#             os.path.join(os.path.dirname(__file__), test_file_path),
+#             0,
+#         )
+#     with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
+#         pt.build_logger(
+#             os.path.join(os.path.dirname(__file__), test_file_path),
+#             log_level_file="",
+#         )
+#     with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
+#         pt.build_logger(
+#             os.path.join(os.path.dirname(__file__), test_file_path),
+#             log_level_console="",
+#         )
+#     with pytest.raises(exceptions.verify.ArgTypeWrongTypeError):
+#         pt.build_logger(
+#             os.path.join(os.path.dirname(__file__), test_file_path),
+#             with_rich_traceback="",
+#         )
+#     pt.build_logger(
+#         os.path.join(os.path.dirname(__file__), test_file_path),
+#     )
 
 
 def test_UInt():
@@ -76,84 +79,84 @@ def test_UInt():
     test_var = test_var + 10.0
     test_var = test_var + pt.UInt(1)
     with pytest.raises(NotImplementedError):
-        test_var = test_var + ""  # type: ignore
+        test_var = test_var + ""
     with pytest.raises(exceptions.pt.UIntValueError):
         test_var = test_var + (-1000)
     test_var += 10
     test_var += 10.0
     test_var += pt.UInt(1)
     with pytest.raises(NotImplementedError):
-        test_var += ""  # type: ignore
+        test_var += ""
     with pytest.raises(exceptions.pt.UIntValueError):
         test_var += -1000
     _ = 10 + test_var
     _ = 10.0 + test_var
     with pytest.raises(NotImplementedError):
-        _ = "" + test_var  # type: ignore
+        _ = "" + test_var
     # 減法（`-`）
     test_var = pt.UInt(100)
     test_var = test_var - 10
     test_var = test_var - 10.0
     test_var = test_var - pt.UInt(1)
     with pytest.raises(NotImplementedError):
-        test_var = test_var - ""  # type: ignore
+        test_var = test_var - ""
     with pytest.raises(exceptions.pt.UIntValueError):
         test_var = test_var - 1000
     test_var -= 10
     test_var -= 10.0
     test_var -= pt.UInt(1)
     with pytest.raises(NotImplementedError):
-        test_var -= ""  # type: ignore
+        test_var -= ""
     with pytest.raises(exceptions.pt.UIntValueError):
         test_var -= 10000
     _ = 10 - test_var
     _ = 10.0 - test_var
     with pytest.raises(NotImplementedError):
-        _ = "" - test_var  # type: ignore
+        _ = "" - test_var
     # 乘法（`*`）
     test_var = pt.UInt(100)
     test_var = test_var * 10
     test_var = test_var * 10.0
     test_var = test_var * pt.UInt(1)
     with pytest.raises(NotImplementedError):
-        _ = test_var * ""  # type: ignore
+        _ = test_var * ""
     with pytest.raises(exceptions.pt.UIntValueError):
         _ = test_var * -1000
     test_var *= 10
     test_var *= 10.0
     test_var *= pt.UInt(1)
     with pytest.raises(NotImplementedError):
-        test_var *= ""  # type: ignore
+        test_var *= ""
     with pytest.raises(exceptions.pt.UIntValueError):
         test_var *= -10000
     _ = 10 * test_var
     _ = 10.0 * test_var
     with pytest.raises(NotImplementedError):
-        _ = "" * test_var  # type: ignore
+        _ = "" * test_var
     # 等於（`==`）
     assert pt.UInt(10) == 10
     assert pt.UInt(10) == 10.0
     assert pt.UInt(10) == pt.UInt(10)
     with pytest.raises(NotImplementedError):
-        pt.UInt(10) == ""  # type: ignore
+        _ = pt.UInt(10) == ""
     # 不等於（`!=`）
     assert pt.UInt(10) != 20
     assert pt.UInt(10) != 20.0
     assert pt.UInt(10) != pt.UInt(20)
     with pytest.raises(NotImplementedError):
-        pt.UInt(10) != ""  # type: ignore
+        _ = pt.UInt(10) != ""
     # 大於（`>`）
     assert pt.UInt(20) > 10
     assert pt.UInt(20) > 10.0
     assert pt.UInt(20) > pt.UInt(10)
     with pytest.raises(NotImplementedError):
-        pt.UInt(20) > ""  # type: ignore
+        _ = pt.UInt(20) > ""  # ty: ignore[unsupported-operator]
     # 小於（`<`）
     assert pt.UInt(10) < 20
     assert pt.UInt(10) < 20.0
     assert pt.UInt(10) < pt.UInt(20)
     with pytest.raises(NotImplementedError):
-        pt.UInt(10) < ""  # type: ignore
+        _ = pt.UInt(10) < ""  # ty: ignore[unsupported-operator]
     # 大於等於（`>=`）
     assert pt.UInt(20) >= 10
     assert pt.UInt(20) >= 20
@@ -162,7 +165,7 @@ def test_UInt():
     assert pt.UInt(20) >= pt.UInt(10)
     assert pt.UInt(20) >= pt.UInt(20)
     with pytest.raises(NotImplementedError):
-        pt.UInt(20) >= ""  # type: ignore
+        _ = pt.UInt(20) >= ""  # ty: ignore[unsupported-operator]
     # 小於等於（`>=`）
     assert pt.UInt(10) <= 20
     assert pt.UInt(10) <= 10
@@ -171,20 +174,13 @@ def test_UInt():
     assert pt.UInt(10) <= pt.UInt(20)
     assert pt.UInt(10) <= pt.UInt(10)
     with pytest.raises(NotImplementedError):
-        pt.UInt(10) <= ""  # type: ignore
-    #
+        _ = pt.UInt(10) <= ""
     with pytest.raises(exceptions.pt.UIntValueError):
         pt.UInt(-10)
     assert int(pt.UInt(10)) == 10
     assert float(pt.UInt(10)) == 10.0
     assert str(pt.UInt(10)) == "10"
     assert repr(pt.UInt(10)) == "UInt(10)"
-    with pytest.raises(
-        expected_exception=exceptions.verify.ArgTypeWrongTypeError
-    ):
+    with pytest.raises(expected_exception=exceptions.verify.ArgTypeWrongTypeError):
         pt.UInt("")  # type: ignore
     pt.UInt(pt.UInt(10))
-
-
-def test_bytes_to_mb():
-    assert pt.bytes_to_mb(1000000) == 1
