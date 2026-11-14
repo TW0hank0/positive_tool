@@ -1,39 +1,37 @@
-![icon](https://github.com/TW0hank0/positive_tool/blob/master/icon.png)
+![icon](./icon.png)
 
 # positive_tool
 
-[正體中文](https://github.com/TW0hank0/positive_tool/blob/master/README.md) | [English](https://github.com/TW0hank0/positive_tool/blob/master/READMEs/README_en.md)
-
 `positive_tool` 是一個面向開發者的工具庫。
 
+### 使用
 
-## 測試
+支援 cpython 3.11~3.15 及 pypy 3.11~3.12
+
+##### 安裝
+
+從 pypi 下載
+
+使用 uv
+```
+uv add positive-tool
+```
+
+使用 pip
+```
+pip install positive-tool
+```
+
+##### 測試
+
+執行
+
 ```bash
 uv sync --extra test
 uv run pytest
 ```
 
-## 使用
-
-### 安裝
-
-從pypi下載
-
-使用uv
-```
-uv add positive-tool
-```
-
-使用pip
-```
-pip install positive-tool
-```
-
-*或是*
-
-在release下載wheel檔案
-
-### 範例
+##### 範例
 
 ```python
 >>> from positive_tool import verify
@@ -51,46 +49,19 @@ except exceptions.verify.ArgTypeWrongTypeError:
 10
 ```
 
-### 支援
-
-- cpython
-
-workflow測試版本：3.11~3.15
-
-- pypy
-
-workflow測試版本：3.11
-
-### 安裝
-
-使用pip
+### 授權與聲明
 
 ```
-pip install positive-tool
-```
-
-使用uv
-
-```
-uv add positive-tool
-```
-
-**安裝GUI依賴**
-
-使用pip
-
-```
-pip install "positive-tool[gui]"
-```
-
-使用uv
-
-```
-uv add positive-tool --extra gui
-```
-
-### 協議
-
 版權所有 (C) 2026 TW0hank0
 
-本程式基於 GNU Affero General Public License v3 授權
+本程式為自由軟體：您可以根據自由軟體基金會發佈的 GNU Affero 通用公共授權條款
+第 3 版（僅此版本）重新發佈及/或修改本程式。
+
+本程式的發佈是希望它能發揮功用，但不提供任何擔保；
+甚至沒有隱含的適銷性或特定目的適用性擔保。詳見 GNU Affero 通用公共授權條款。
+
+您應該已經收到一份 GNU Affero 通用公共授權條款副本。
+如果沒有，請參見 <https://www.gnu.org/licenses/>。
+```
+
+協議全文請見 [LICENSE.txt](./LICENSE.txt) 檔案。

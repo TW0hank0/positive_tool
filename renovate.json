@@ -1,0 +1,18 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["config:best-practices"],
+	"automerge": false,
+	"labels": ["dep-update"],
+	"packageRules": [
+		{
+			"automerge": false,
+			"matchPackageNames": ["*"]
+		},
+		{
+			"rangeStrategy": "pin",
+			"matchPackageNames": ["*"],
+			"groupName": null
+		}
+	],
+	"timezone": "Asia/Taipei"
+}

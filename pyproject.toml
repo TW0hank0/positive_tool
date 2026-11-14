@@ -1,33 +1,31 @@
 [project]
 name = "positive-tool"
-version = "0.7.4"
+version = "0.9.0"
 description = "一個面向開發者的工具"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "AGPL-3.0-only"
 dependencies = ["rich==14.3.1"]
-#license = { file = "LICENSE" }
-license = { "text" = "AGPL-3.0-only" }
-
-[build-system]
-requires = ["setuptools>=77", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project.optional-dependencies]
-test = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]
-build = ["twine"]
-check = ["mypy>=1.19.1", "ruff>=0.14.14", "ty>=0.0.14"]
-gui = ["pyside6>=6.10.2"]
 
 [project.urls]
 Homepage = "https://github.com/TW0hank0/positive_tool"
 Repository = "https://github.com/TW0hank0/positive_tool"
 
-[tool.setuptools.package-data]
-positive_tool = ["py.typed"]
+[project.optional-dependencies]
+build = ["twine"]
+check = ["mypy>=1.19.1", "ruff>=0.14.14", "ty>=0.0.14"]
+test = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]
+
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 addopts = "-v --cov=positive_tool --cov-report=term-missing"
-testpaths = ["tests"]
+log_cli_level = "INFO"
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-log_cli_level = "INFO"
+testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+positive_tool = ["py.typed"]

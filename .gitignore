@@ -7,11 +7,10 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
+.venv/
 
 # tool cache
-.ruff_cache/
-uv.lock
+**/.ruff_cache/
 
 # test cache
 tmp_test_pt_*
@@ -20,3 +19,9 @@ tmp_test_pt_*
 
 # krita cache
 *.kra~
+
+# ide
+.vscode/**
+
+# lock file
+uv.lock
