@@ -1,7 +1,12 @@
 name: commit-test
 
 on:
-  push: 
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+  issues: write
 jobs:
   check:
     runs-on: ${{ matrix.os }}
