@@ -1,0 +1,59 @@
+name: commit-test
+
+on:
+  push: 
+jobs:
+  check:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+        python:
+          - cpython-3.12
+          - cpython-3.13
+          - cpython-3.14
+          - cpython-3.15
+          - cpython-3.13+freethreaded
+          - cpython-3.14+freethreaded
+          - cpython-3.15+freethreaded
+          - pypy-3.12
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      - name: Set up Python with uv
+        run: uv python install ${{ matrix.python }}
+      - name: Create venv
+        run: uv venv --python ${{ matrix.python }}
+      - name: Install project dependencies with uv
+        run: uv sync --extra test --extra check
+      - name: check use ruff
+        run: uv run ruff check src/positive_tool
+      - name: check use ty
+        run: uv run ty check src/positive_tool
+      - name: Run tests with pytest
+        run: uv run pytest
+
+  sync-to-codeberg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CODEBERG_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H codeberg.org >> ~/.ssh/known_hosts
+
+      - name: Push to Codeberg
+        run: |
+          git remote add codeberg git@codeberg.org:${{ secrets.CODEBERG_USERNAME }}/${{ secrets.CODEBERG_REPO }}.git
+          git push --mirror codeberg
