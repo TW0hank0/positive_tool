@@ -13,7 +13,7 @@ Repository = "https://github.com/TW0hank0/positive_tool"
 
 [project.optional-dependencies]
 build = ["twine"]
-check = ["mypy>=1.19.1", "ruff>=0.14.14", "ty>=0.0.14"]
+check = ["mypy>=1.19.1", "ruff==0.17.6", "ty>=0.0.14"]
 test = ["pytest>=9.0.2", "pytest-cov>=4.0.0"]
 
 [build-system]
